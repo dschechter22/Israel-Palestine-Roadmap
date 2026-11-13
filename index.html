@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Israel-Palestine Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: an old atlas you can walk through. Pixel map as the anchor, plain readable text beside it, very few boxes. Light = parchment, dark = night sea. */
+:root{
+  --bg:#efe4cf; --bg2:#e5d6b8; --ink:#2a1f14; --dim:#6b5741; --line:#cbb592; --accent:#8b4513; --mark:#b8860b;
+  --war:#b3261e; --armed:#a8550a; --truce:#1d5fa8; --peace:#2e7d4f; --neutral:#6b5741;
+  --frame:#2a1f14;
+  --f-head:"VT323", ui-monospace, "Courier New", monospace;
+  --f-term:"VT323", ui-monospace, "Courier New", monospace;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#070d18; --bg2:#0f1a2c; --ink:#e4ecf7; --dim:#97a6bf; --line:#253a5c; --accent:#ffd166; --mark:#ffd166;
+  --war:#ff7a8a; --armed:#ffaa66; --truce:#86bdff; --peace:#7fe0a8; --neutral:#a7b2c6; --frame:#000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#070d18; --bg2:#0f1a2c; --ink:#e4ecf7; --dim:#97a6bf; --line:#253a5c; --accent:#ffd166; --mark:#ffd166;
+  --war:#ff7a8a; --armed:#ffaa66; --truce:#86bdff; --peace:#7fe0a8; --neutral:#a7b2c6; --frame:#000; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16.5px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 90px}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px dashed var(--accent);outline-offset:3px}
+.wrap{max-width:1220px;margin:0 auto}
+
+header.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px;padding-block:22px 6px;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--f-head);font-weight:400;font-size:clamp(28px,4vw,38px);letter-spacing:.02em;margin:0;line-height:1.1}
+.logo span{color:var(--accent)}
+nav.tabs{display:flex;gap:4px 22px;flex-wrap:wrap;flex:1}
+nav.tabs a{font-family:var(--f-term);font-size:23px;line-height:1;color:var(--dim);text-decoration:none;padding:8px 0 10px;border-bottom:3px solid transparent}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-color:var(--accent)}
+.textbtn{background:none;border:0;cursor:pointer;font-family:var(--f-term);font-size:21px;color:var(--dim);padding:6px 0}
+.textbtn:hover{color:var(--ink)}
+
+/* timeline road */
+.road{overflow-x:auto;overflow-y:hidden;margin-top:14px;scrollbar-width:thin}
+.road ol{list-style:none;margin:0;padding:6px 4px 8px;display:flex;gap:2px;min-width:max-content;position:relative}
+.road ol::before{content:"";position:absolute;left:8px;right:8px;top:19px;border-top:3px dotted var(--line)}
+.stopbtn{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:0;cursor:pointer;padding:4px 6px;width:84px}
+.stopbtn .dot{width:12px;height:12px;background:var(--bg);border:2px solid var(--dim);margin-top:5px}
+.stopbtn .yr{font-family:var(--f-term);font-size:17px;line-height:1;color:var(--dim);text-align:center}
+.stopbtn.seen .dot{background:var(--line)}
+.stopbtn[aria-current="step"] .dot{background:var(--mark);border-color:var(--ink);width:16px;height:16px;margin-top:3px}
+.stopbtn[aria-current="step"] .yr{color:var(--ink)}
+
+.storygrid{display:grid;grid-template-columns:minmax(280px,400px) minmax(0,1fr);gap:clamp(20px,4vw,52px);margin-top:22px;align-items:start}
+@media (max-width:880px){.storygrid{grid-template-columns:minmax(0,1fr)}}
+.side{display:flex;flex-direction:column;gap:18px;min-width:0}
+@media (min-width:881px) and (min-height:1000px){.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}}
+
+/* map */
+.mapfrm{position:relative;width:100%;aspect-ratio:126/210;border:3px solid var(--frame);background:#0e3a63}
+@media (max-width:880px){.mapfrm{width:min(100%,360px)}}
+.mapfrm canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;transform:translate(-50%,-50%);font-family:var(--f-term);font-size:clamp(13px,1.5vw,17px);line-height:1;color:#fff;
+  text-shadow:1px 1px 0 #000,-1px 0 0 #000,0 -1px 0 #000,1px 0 0 #000,-1px -1px 0 #000;white-space:nowrap}
+.lbl.city{transform:translate(5px,-50%);color:#ffe9b0}
+.lbl.city::before{content:"";position:absolute;left:-7px;top:50%;width:4px;height:4px;margin-top:-2px;background:#ffe9b0;box-shadow:0 0 0 1px #000}
+.lbl.sea{color:#a9d8ff}
+.lbl.sign{background:#ffd166;color:#1a1200;text-shadow:none;padding:3px 6px;border:2px solid #000;transform:translate(-50%,-170%);font-size:15px}
+.lbl.sign.e{transform:translate(-94%,-170%)}
+.mapnote{font-family:var(--f-term);font-size:17px;line-height:1.2;color:var(--dim);margin:6px 0 0}
+.legend{display:flex;flex-direction:column;gap:5px;font-size:13.5px;line-height:1.3}
+.legend span{display:flex;gap:8px;align-items:center}
+.sw{flex:none;width:14px;height:14px;border:1px solid var(--frame)}
+
+/* fighting */
+.label{font-family:var(--f-term);font-size:19px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+.fight p.lead{margin:0 0 12px;font-size:15.5px;line-height:1.5}
+.matchups{list-style:none;margin:0;padding:0}
+.matchups li{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.3}
+.matchups li:last-child{border-bottom:1px solid var(--line)}
+.matchups .b{text-align:right}
+.rel{font-family:var(--f-term);font-size:17px;line-height:1;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.rel i{display:inline-block;width:9px;height:9px;background:currentColor}
+.rel.war{color:var(--war)}.rel.armed{color:var(--armed)}.rel.truce{color:var(--truce)}.rel.peace{color:var(--peace)}.rel.neutral{color:var(--neutral)}
+.key{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px}
+.key .rel{font-size:15px}
+
+/* story text */
+.story{min-width:0}
+.crumb{font-family:var(--f-term);font-size:20px;color:var(--dim);margin:0}
+.story h2{font-family:var(--f-head);font-weight:400;font-size:clamp(34px,4.4vw,48px);line-height:1;margin:4px 0 18px;text-wrap:balance}
+.story h3{font-family:var(--f-term);font-size:21px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);font-weight:400;margin:36px 0 10px}
+.facts{margin:0;padding:0;list-style:none;max-width:68ch;display:flex;flex-direction:column;gap:14px}
+.facts li{padding-left:18px;position:relative}
+.facts li::before{content:"";position:absolute;left:0;top:.68em;width:6px;height:6px;background:var(--accent)}
+.dispute{max-width:68ch;margin-top:20px}
+.dispute h4{font-family:var(--f-head);font-weight:400;font-size:25px;line-height:1.15;margin:0 0 8px}
+.view{margin:0 0 12px;padding-left:14px;border-left:3px solid var(--line)}
+.view b{display:block;font-weight:600;font-size:15px;margin-bottom:2px}
+.view p{margin:0}
+.refs{display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:4px;font-size:12.5px;line-height:1.35}
+.refs a,.refs span{color:var(--dim)}
+.deeper{list-style:none;margin:0;padding:0;max-width:68ch}
+.deeper li{border-top:1px solid var(--line)}
+.deeper li:last-child{border-bottom:1px solid var(--line)}
+.deeper button{display:flex;gap:12px;width:100%;text-align:left;background:none;border:0;cursor:pointer;padding:11px 2px;font-size:15.5px;line-height:1.4}
+.deeper button::before{content:">";font-family:var(--f-term);font-size:20px;line-height:1;color:var(--accent);padding-top:1px}
+.deeper button:hover{color:var(--accent)}
+.src{list-style:none;margin:0;padding:0;max-width:78ch;font-size:13.5px;line-height:1.45;display:flex;flex-direction:column;gap:7px}
+.tag{font-family:var(--f-term);font-size:16px;color:var(--dim);margin-right:6px}
+.persp{color:var(--dim);font-style:italic}
+.pathbody p{max-width:68ch;margin:0 0 14px}
+.back{background:none;border:0;cursor:pointer;font-family:var(--f-term);font-size:20px;color:var(--accent);padding:0;margin:4px 0 10px}
+
+nav.foot{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);
+  padding:10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left, 0px));
+  display:flex;justify-content:center;gap:18px;align-items:center}
+.step{font-family:var(--f-term);font-size:22px;background:none;border:2px solid var(--ink);color:var(--ink);padding:5px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--line)}
+.step:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.step[disabled]{opacity:.35;cursor:default}
+nav.foot .count{font-family:var(--f-term);font-size:20px;color:var(--dim);min-width:70px;text-align:center}
+
+/* borders tab */
+.intro{max-width:70ch;margin:22px 0 0}
+.intro p{margin:0 0 12px}
+.bgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,330px);gap:clamp(20px,4vw,48px);margin-top:20px;align-items:start}
+@media (max-width:880px){.bgrid{grid-template-columns:minmax(0,1fr)}}
+.bmaps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;justify-items:center;justify-content:center}
+.bmaps figure{margin:0;width:100%;max-width:400px}
+.bmaps figcaption{font-family:var(--f-term);font-size:19px;line-height:1.2;margin-top:6px}
+.controls{display:flex;flex-direction:column;gap:16px}
+.controls select{width:100%;font:inherit;font-size:15px;background:var(--bg);color:var(--ink);border:2px solid var(--ink);padding:7px 8px}
+.seg{display:flex;border:2px solid var(--ink);width:max-content;max-width:100%}
+.seg button{background:none;border:0;cursor:pointer;font-family:var(--f-term);font-size:19px;padding:5px 12px;color:var(--dim)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.setdesc{font-size:14.5px;line-height:1.5;margin:0}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.quick button{font-family:var(--f-term);font-size:17px;background:none;border:1px solid var(--line);padding:3px 8px;cursor:pointer;color:var(--ink)}
+.quick button:hover{border-color:var(--accent)}
+
+/* plans tab */
+.tablewrap{overflow-x:auto;margin-top:22px;border-top:2px solid var(--ink)}
+table.cmp{border-collapse:collapse;min-width:820px;width:100%;font-size:14px;line-height:1.4}
+table.cmp th{font-family:var(--f-term);font-size:18px;font-weight:400;text-align:left;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--line)}
+table.cmp td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.cmp td:first-child{font-weight:600;white-space:nowrap}
+table.cmp a{text-decoration:none}
+.plan{display:grid;grid-template-columns:180px minmax(0,1fr);gap:clamp(16px,3vw,36px);padding:34px 0;border-bottom:1px solid var(--line);scroll-margin-top:20px}
+@media (max-width:620px){.plan{grid-template-columns:minmax(0,1fr)}.plan .mapfrm{width:160px}}
+.plan .mapfrm{width:180px}
+.plan .nomap{width:180px;aspect-ratio:126/210;border:3px dashed var(--line);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--f-term);font-size:18px;color:var(--dim);padding:10px}
+.plan h3{font-family:var(--f-head);font-weight:400;font-size:32px;line-height:1.05;margin:0}
+.plan .by{color:var(--dim);margin:4px 0 14px;font-size:14.5px}
+.terms{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 16px;margin:0 0 14px;max-width:72ch}
+.terms dt{font-family:var(--f-term);font-size:18px;color:var(--dim);line-height:1.35}
+.terms dd{margin:0}
+@media (max-width:520px){.terms{grid-template-columns:minmax(0,1fr)}.terms dd{margin-bottom:8px}}
+.plan .ctx p{max-width:70ch;margin:0 0 10px}
+.plan .act{margin-top:6px}
+
+
+/* leaders tab */
+.jump{margin-top:18px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;align-items:baseline}
+.jump div{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.jump b{font-family:var(--f-term);font-weight:400;font-size:19px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-right:4px}
+.jump a{font-family:var(--f-term);font-size:20px;text-decoration:none}
+.jump a:hover{text-decoration:underline}
+.lperiod{scroll-margin-top:16px}
+.lgroup{font-family:var(--f-head);font-weight:400;font-size:clamp(30px,4vw,42px);line-height:1.05;margin:44px 0 0;padding-top:14px;border-top:2px solid var(--ink);display:flex;flex-direction:column;gap:2px}
+.pyrs{font-family:var(--f-term);font-size:20px;color:var(--accent);letter-spacing:.04em}
+.pdesc{color:var(--dim);margin:6px 0 0;max-width:70ch}
+.lcountry{margin-top:22px}
+.lcountry>h3{font-family:var(--f-term);font-weight:400;font-size:20px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin:0 0 4px}
+details.person{border-bottom:1px solid var(--line)}
+details.person:first-of-type{border-top:1px solid var(--line)}
+details.person summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 14px;padding:10px 0}
+details.person summary::-webkit-details-marker{display:none}
+details.person summary::before{content:"+";font-family:var(--f-term);font-size:22px;line-height:1;color:var(--accent);width:12px}
+details.person[open] summary::before{content:"-"}
+.pname{font-family:var(--f-head);font-size:24px;line-height:1.1}
+.person .role{color:var(--dim);font-size:14px;line-height:1.4}
+.person dl{margin:0 0 16px 26px;display:grid;grid-template-columns:minmax(0,1fr);gap:6px;max-width:76ch}
+.person dt{font-family:var(--f-term);font-size:18px;color:var(--dim);line-height:1.1;text-transform:uppercase;letter-spacing:.03em;margin-top:4px}
+.person dd{margin:0}
+/* cost tab */
+.ckey{display:flex;flex-wrap:wrap;gap:6px 22px;margin:18px 0 6px;font-family:var(--f-term);font-size:19px;color:var(--dim)}
+.ckey span{display:flex;align-items:center;gap:7px}
+.sqA,.sqB,.sqG{display:inline-block;width:9px;height:9px}
+.sqA{background:#3aa89a}.sqB{background:#e2a43b}.sqG{background:var(--ink)}
+.sqG.tiny,.sq i.tiny{width:5px;height:5px}
+.cblock{padding:20px 0;border-bottom:1px solid var(--line)}
+.cblock h3{font-family:var(--f-head);font-weight:400;font-size:26px;line-height:1.05;margin:0 0 10px}
+.crow{display:grid;grid-template-columns:minmax(150px,230px) minmax(0,1fr);gap:4px 18px;align-items:start;margin-bottom:8px}
+@media (max-width:620px){.crow{grid-template-columns:minmax(0,1fr)}}
+.clab{font-size:14.5px;line-height:1.35}
+.clab b{display:block;font-family:var(--f-term);font-weight:400;font-size:19px;color:var(--dim);text-transform:uppercase;letter-spacing:.03em}
+.sq{display:flex;flex-wrap:wrap;gap:2px;padding-top:4px;align-content:flex-start;min-height:9px}
+.sq i{display:block;width:9px;height:9px}
+.sq.a i{background:#3aa89a}.sq.b i{background:#e2a43b}
+.sq .none{font-family:var(--f-term);font-size:17px;color:var(--dim);line-height:1}
+.cwho{font-size:13px;color:var(--dim);margin:2px 0 0}
+.cmetric{display:flex;flex-wrap:wrap;gap:6px 8px;margin:18px 0 4px}
+.cmetric button{font-family:var(--f-term);font-size:20px;background:none;border:2px solid var(--line);color:var(--ink);padding:4px 12px;cursor:pointer}
+.cmetric button[aria-pressed="true"]{border-color:var(--accent);background:var(--bg2);color:var(--accent)}
+.mlist{display:flex;flex-direction:column;gap:9px;min-width:0}
+.mline{min-width:0}
+.mfig{font-size:14px;line-height:1.35}
+.mtag{font-family:var(--f-term);font-size:18px;text-transform:uppercase;letter-spacing:.03em}
+.crow{border-left:3px solid var(--line);padding-left:12px}
+.vpts{margin:4px 0 6px;padding-left:18px;display:grid;gap:6px}.vpts .vl{font-weight:600}
+.cnote{font-size:13.5px;color:var(--dim);margin:2px 0 0;max-width:76ch}
+.cev .mk i.hol{background:none!important;border:3px solid}
+.cfilter{display:flex;flex-wrap:wrap;gap:6px 8px;margin:14px 0 6px}
+.cfilter button{font-family:var(--f-term);font-size:18px;background:none;border:2px solid var(--line);color:var(--ink);padding:3px 10px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.cfilter button[aria-pressed="true"]{border-color:var(--ink);background:var(--bg2)}
+.cfilter i{display:inline-block;width:10px;height:10px}
+details.cev{border-bottom:1px solid var(--line)}
+details.cev summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:118px 40px minmax(0,1fr);gap:4px 12px;align-items:center;padding:10px 0}
+details.cev summary::-webkit-details-marker{display:none}
+@media (max-width:560px){details.cev summary{grid-template-columns:34px minmax(0,1fr)}details.cev .when{grid-column:2;order:-1}}
+.cev .when{font-family:var(--f-term);font-size:18px;line-height:1.1;color:var(--accent)}
+.cev .mk{display:flex;align-items:center;justify-content:center}
+.cev .mk i{display:block}
+.cev .ttl{font-family:var(--f-head);font-size:22px;line-height:1.1}
+.cev .kl{display:block;font-family:var(--f-body);font-size:14px;color:var(--dim);margin-top:2px}
+.cev .body{padding:0 0 16px 170px}
+@media (max-width:560px){.cev .body{padding-left:46px}}
+.cev dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;margin:0;max-width:76ch;font-size:15px}
+.cev dt{font-family:var(--f-term);font-size:17px;color:var(--dim);line-height:1.35}
+.cev dd{margin:0}
+@media (max-width:520px){.cev dl{grid-template-columns:minmax(0,1fr)}}
+.cev .note{margin:8px 0 0;max-width:76ch;font-size:15px;color:var(--dim)}
+/* about */
+.about{max-width:70ch;margin-top:24px}
+.about h3{font-family:var(--f-term);font-size:21px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);font-weight:400;margin:30px 0 8px}
+.about ul{padding-left:20px}
+.about li{margin-bottom:6px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="logo">Israel-Palestine <span>Roadmap</span></p>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#timeline" data-tab="timeline">Timeline</a>
+      <a href="#borders" data-tab="borders">Borders</a>
+      <a href="#plans" data-tab="plans">Two-State Plans</a>
+      <a href="#leaders" data-tab="leaders">Leaders</a>
+      <a href="#cost" data-tab="cost">Human Cost</a>
+      <a href="#about" data-tab="about">How to read this</a>
+    </nav>
+    <button class="textbtn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <!-- TIMELINE -->
+  <section id="view-timeline">
+    <nav class="road" aria-label="Stops on the timeline"><ol id="road"></ol></nav>
+    <div class="storygrid">
+      <aside class="side" aria-label="Map and who is fighting">
+        <div>
+          <div class="mapfrm" id="tmap"><canvas width="126" height="210"></canvas><canvas class="walk" width="252" height="420"></canvas><div class="labels"></div></div>
+          <p class="mapnote" id="tnote"></p>
+        </div>
+        <div class="legend" id="tlegend"></div>
+        <div class="fight">
+          <p class="label">Who's fighting whom</p>
+          <p class="lead" id="fightLead"></p>
+          <ul class="matchups" id="matchups"></ul>
+          <div class="key"><span class="rel war"><i></i>war</span><span class="rel armed"><i></i>attacks, raids, uprisings</span><span class="rel truce"><i></i>ceasefire or truce</span><span class="rel peace"><i></i>peace</span><span class="rel neutral"><i></i>other</span></div>
+        </div>
+      </aside>
+      <article class="story" id="story" aria-live="polite"></article>
+    </div>
+  </section>
+
+  <!-- BORDERS -->
+  <section id="view-borders" hidden>
+    <div class="intro">
+      <p>Pick any moment to see who controlled what, or who a plan would have given what. Turn on compare to put two maps next to each other, or to lay one over the other and see exactly which areas change.</p>
+    </div>
+    <div class="bgrid">
+      <div class="bmaps" id="bmaps"></div>
+      <div class="controls">
+        <div><p class="label">Map</p><select id="selA" aria-label="Main map"></select><p class="setdesc" id="descA" style="margin-top:8px"></p></div>
+        <div><p class="label">Compare with</p><select id="selB" aria-label="Map to compare"></select><p class="setdesc" id="descB" style="margin-top:8px"></p></div>
+        <div id="modeWrap"><p class="label">Show</p><div class="seg" role="group" aria-label="Compare mode"><button type="button" data-mode="overlay" aria-pressed="true">Overlay</button><button type="button" data-mode="side" aria-pressed="false">Side by side</button></div></div>
+        <div><p class="label">Common comparisons</p><div class="quick" id="quick"></div></div>
+        <div class="legend" id="blegend"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANS -->
+  <section id="view-plans" hidden>
+    <div class="intro">
+      <p>A "two-state solution" means an independent Palestine next to Israel. It has been proposed, in different shapes, for almost a century. Every plan has to answer the same four questions: where the borders go (and what happens to settlements), who gets Jerusalem, what happens to Palestinian refugees and their descendants, and how each side stays safe.</p>
+      <p>Most of these offers were never put on paper, so the maps below are rough sketches based on what participants and reporters described. They show the idea, not the exact lines. The table gives the quick version; scroll down for each plan in detail.</p>
+    </div>
+    <div class="tablewrap"><table class="cmp"><thead><tr><th>Plan</th><th>Land for a Palestinian or Arab state</th><th>Jerusalem</th><th>What happened</th></tr></thead><tbody id="cmpBody"></tbody></table></div>
+    <div id="planList"></div>
+    <div class="intro" style="margin-top:30px">
+      <p class="label">Other ideas people propose</p>
+      <p><b>One state.</b> One country for everyone between the river and the sea, with equal rights. Some Palestinians and some Israeli and international activists support it. Most Israelis reject it because Jews would lose their majority, and critics on all sides doubt two peoples in conflict could share one government.</p>
+      <p><b>Confederation.</b> Two states with open borders and some shared institutions, sometimes called "two states, one homeland." Settlers could stay in Palestine as residents, and Palestinians could live in Israel. It's a small but growing proposal from Israeli and Palestinian groups.</p>
+      <p><b>Managing the status quo.</b> No final deal, with Israel keeping security control and Palestinians having limited self-rule. Critics on the left call this permanent occupation. Critics on the right want formal annexation of all or part of the West Bank instead.</p>
+    </div>
+  </section>
+
+
+  <!-- LEADERS -->
+  <section id="view-leaders" hidden>
+    <div class="intro">
+      <p>The people who shaped the conflict, period by period, grouped by country within each period. Leaders active across several periods appear in each one. Tap a name to open their profile. For each one: what they're known for, their failures and controversies, where they stood on land and borders, and where they stood on religion, ethnicity and identity. Quotes and controversies are ones widely reported and documented; follow the sources to check them.</p>
+    </div>
+    <nav class="jump" id="ljump" aria-label="Jump to a country"></nav>
+    <div id="lbody"></div>
+  </section>
+
+  <!-- COST -->
+  <section id="view-cost" hidden>
+    <div class="intro">
+      <p>What each round of the conflict cost each side. Each color is a different kind of harm: people killed, people injured, people forced from their homes, people arrested or held, and homes destroyed. Every number says whose count it is, because each side counts differently. Where nobody has a reliable figure, it says so.</p>
+    </div>
+    <div class="ckey" id="ckey"></div>
+    <p class="cnote" id="cnote"></p>
+    <div id="cblocks"></div>
+    <h2 class="lgroup">Major events, in order</h2>
+    <p class="pdesc">Tap any event for who carried it out, who was harmed, and sources. Here the marker color shows who carried out the act, not who was harmed. Solid markers are events counted mainly in deaths; hollow markers are raids, arrests, demolitions and expulsions that killed few or no one but affected many. Bigger markers mean more people killed or affected.</p>
+    <div class="cfilter" role="group" aria-label="Filter by who carried it out" id="cfilter"></div>
+    <div class="cfilter" role="group" aria-label="Filter by kind of event" id="ctype"></div>
+    <div class="clog" id="clog"></div>
+  </section>
+  <!-- ABOUT -->
+  <section id="view-about" hidden>
+    <div class="about">
+      <p>This roadmap walks through the Israeli-Palestinian conflict from the late 1800s to November 2026. Each stop on the timeline is a period. The map shows who controlled what, the panel under it shows who was fighting whom, and the text tells the story. "Go deeper" links at each stop cover the background and related questions that help the period make sense.</p>
+      <h3>How it handles disagreement</h3>
+      <p>Where historians or the two sides disagree, the stop has a section called "Where people disagree" that lays out each side's account, says who holds it, and lists sources for each. Loaded words like "occupation," "apartheid," "genocide" and "terrorism" are credited to whoever uses them. Where a court or a UN body used the word, the page says so.</p>
+      <h3>Sources</h3>
+      <p>Each source says what kind it is (an original document, a government or UN record, a court record, a reference book, a historian, a human rights group, or news) and, if it's known for a point of view, what that is. Original documents and official records are used wherever they exist. Links go to the source; books don't have links. Not every sentence was checked against its source while building this, so treat the lists as places to verify, especially for numbers that matter to you.</p>
+      <h3>Numbers corrected while building this</h3>
+      <ul>
+        <li>First Intifada deaths: about 1,200 to 1,400 Palestinians and 170 to 185 Israelis (B'Tselem, depending on what's counted).</li>
+        <li>Samu raid, 1966: the mine killed three Israeli Border Police. Houses destroyed: 40 by Israel's count, 125 by the UN's. 16 Jordanian soldiers and 3 civilians were killed.</li>
+        <li>Gaza: about 67,200 dead on the day of the October 2025 ceasefire by the Health Ministry's count, and about 74,400 by October 2026. Israel's army says it killed over 24,000 fighters.</li>
+        <li>About 157 of 193 UN members recognize Palestine.</li>
+        <li>Israeli security personnel killed since October 7, 2023: 1,152 as of October 2025 (Israel's Defense Ministry).</li>
+        <li>Lebanon, 1982: Lebanese police counted 19,085 killed through August 31, 1982; the newspaper An-Nahar counted 17,825.</li>
+        <li>Kafr Qasim, 1956: 48 killed, or 49 counting an unborn child.</li>
+      </ul>
+      <h3>About the maps</h3>
+      <p>The maps are hand-drawn pixel sketches, good for seeing big changes, not for exact lines. Plans that were never put on paper are drawn from participants' descriptions.</p>
+      <h3>Books, by point of view</h3>
+      <ul>
+        <li>Ian Black, Enemies and Neighbours. Tells both stories side by side. A good place to start.</li>
+        <li>Rashid Khalidi, The Hundred Years' War on Palestine. Palestinian point of view.</li>
+        <li>Benny Morris, Righteous Victims. Israeli historian whose archive research on 1948 challenged Israel's founding story, though his own politics later moved right.</li>
+        <li>Tom Segev, One Palestine, Complete. The British years, by an Israeli writer.</li>
+        <li>Avi Shlaim, The Iron Wall. Israel and the Arab world after 1948, from a critical Israeli-British historian.</li>
+        <li>Anita Shapira, Israel: A History, and Daniel Gordis, Israel: A Concise History. Mainstream Israeli and Israel-sympathetic views. Neither claims Israel's record is clean.</li>
+        <li>Steer clear of Joan Peters, From Time Immemorial, which historians have largely discredited.</li>
+      </ul>
+      <h3>Up to date as of</h3>
+      <p>November 13, 2026. Israel's coalition talks and the Gaza ceasefire were still moving.</p>
+    </div>
+  </section>
+</div>
+
+<nav class="foot" id="foot" aria-label="Step through the timeline">
+  <button class="step" id="prev" type="button">&lt; Back</button>
+  <span class="count" id="count"></span>
+  <button class="step" id="next" type="button">Next &gt;</button>
+</nav>
+
+<script src="d0.js"></script>
+<script src="d0b.js"></script>
+<script src="s1.js"></script>
+<script src="s2.js"></script>
+<script src="s3.js"></script>
+<script src="plans.js"></script>
+<script src="leaders.js"></script>
+<script src="cost.js"></script>
+<script src="cost2.js"></script>
+<script>
+(function(){
+"use strict";
+const STOPS=window.STOPS,PLANS=window.PLANS;
+/* ---------- theme ---------- */
+const root=document.documentElement,themeBtn=document.getElementById("themeBtn");
+function isDark(){const t=root.dataset.theme;return t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches;}
+function syncThemeBtn(){themeBtn.textContent=isDark()?"Light mode":"Dark mode";}
+try{const t=localStorage.getItem("ipr-theme");if(t)root.dataset.theme=t;}catch(e){}
+syncThemeBtn();
+themeBtn.onclick=()=>{const t=isDark()?"light":"dark";root.dataset.theme=t;try{localStorage.setItem("ipr-theme",t);}catch(e){}syncThemeBtn();};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",syncThemeBtn);
+
+/* ---------- geography ---------- */
+const W=126,H=210;
+const X=lon=>(lon-32.2)*30, Y=lat=>(33.6-lat)*35;
+const P={
+ MED:[[31.9,33.7],[35.40,33.7],[35.37,33.6],[35.20,33.27],[35.10,33.09],[35.07,32.92],[34.95,32.83],[34.77,32.08],[34.64,31.80],[34.45,31.52],[34.22,31.32],[33.80,31.13],[32.30,31.26],[31.9,31.40]],
+ SOUTHSEA:[[32.55,29.97],[32.70,29.60],[33.10,29.03],[33.60,28.24],[34.25,27.73],[34.33,27.92],[34.52,28.50],[34.67,28.97],[34.90,29.49],[34.97,29.55],[35.0,29.52],[34.95,29.30],[34.80,28.70],[34.65,28.10],[34.62,27.4],[33.75,27.4],[33.25,28.25],[32.85,28.90],[32.60,29.40],[32.45,29.85]],
+ EGYPT:[[31.9,31.40],[32.30,31.26],[32.33,30.90],[32.27,30.60],[32.40,30.35],[32.55,29.97],[32.45,29.85],[32.60,29.40],[32.85,28.90],[33.25,28.25],[33.75,27.4],[31.9,27.4]],
+ SINAI:[[34.22,31.32],[33.80,31.13],[32.30,31.26],[32.33,30.90],[32.27,30.60],[32.40,30.35],[32.55,29.97],[32.70,29.60],[33.10,29.03],[33.60,28.24],[34.25,27.73],[34.33,27.92],[34.52,28.50],[34.67,28.97],[34.90,29.49]],
+ SAUDI:[[36.6,29.2],[36.6,27.4],[34.62,27.4],[34.65,28.10],[34.80,28.70],[34.95,29.30],[35.0,29.45]],
+ EAST:[[35.10,33.09],[35.20,33.27],[35.37,33.6],[35.40,33.7],[36.6,33.7],[36.6,29.2],[35.0,29.45],[34.97,29.55],[35.15,30.10],[35.35,30.80],[35.42,31.05],[35.53,31.77],[35.57,32.70],[35.62,33.25],[35.50,33.10]],
+ TRANSJ:[[35.57,32.70],[35.75,32.72],[36.0,32.55],[36.6,32.32],[36.6,29.2],[35.0,29.45],[34.97,29.55],[35.15,30.10],[35.35,30.80],[35.42,31.05],[35.53,31.77],[35.57,32.40]],
+ MANDATE:[[35.10,33.09],[35.07,32.92],[34.95,32.83],[34.77,32.08],[34.64,31.80],[34.45,31.52],[34.22,31.32],[34.90,29.49],[34.97,29.55],[35.15,30.10],[35.35,30.80],[35.42,31.05],[35.45,31.50],[35.53,31.77],[35.57,32.40],[35.57,32.70],[35.64,32.88],[35.62,33.05],[35.62,33.25],[35.58,33.28],[35.50,33.10]],
+ WB:[[35.25,32.55],[35.10,32.50],[35.02,32.38],[34.97,32.20],[35.00,32.05],[34.98,31.88],[35.08,31.83],[35.18,31.86],[35.24,31.80],[35.17,31.74],[35.02,31.66],[34.90,31.46],[35.00,31.36],[35.20,31.36],[35.40,31.37],[35.45,31.50],[35.53,31.77],[35.55,32.10],[35.57,32.40],[35.45,32.53]],
+ GAZA:[[34.21,31.32],[34.49,31.61],[34.57,31.55],[34.27,31.21]],
+ GAZA_E:[[34.50,31.60],[34.57,31.55],[34.27,31.21],[34.21,31.31],[34.32,31.33],[34.40,31.42]],
+ GOLAN:[[35.64,32.70],[35.62,32.85],[35.63,33.00],[35.65,33.20],[35.69,33.27],[35.80,33.33],[35.86,33.30],[35.83,33.15],[35.87,32.95],[35.82,32.80],[35.75,32.70]],
+ SLEB2:[[35.10,33.09],[35.55,33.10],[35.60,33.28],[35.78,33.40],[35.62,33.58],[35.30,33.52],[35.18,33.30]],
+ SLEB:[[35.10,33.09],[35.55,33.10],[35.60,33.28],[35.70,33.35],[35.55,33.42],[35.25,33.33],[35.15,33.20]],
+ A1:[[35.07,32.93],[35.10,33.09],[35.36,33.08],[35.42,32.95],[35.30,32.80],[35.12,32.86]],
+ A2:[[35.30,32.62],[35.10,32.45],[35.02,32.30],[34.98,32.15],[34.86,32.02],[34.84,31.90],[34.92,31.70],[34.86,31.45],[34.75,31.30],[34.95,31.18],[35.25,31.20],[35.42,31.25],[35.45,31.50],[35.53,31.77],[35.55,32.20],[35.57,32.40],[35.48,32.55]],
+ A3:[[34.70,31.86],[34.64,31.80],[34.45,31.52],[34.21,31.32],[34.30,31.10],[34.40,30.90],[34.55,31.00],[34.62,31.30],[34.76,31.62],[34.80,31.80]],
+ A4:[[34.72,32.09],[34.78,32.09],[34.79,32.02],[34.73,32.01]],
+ JLM:[[35.10,31.86],[35.31,31.86],[35.31,31.67],[35.10,31.67]],
+ PEEL_J:[[35.07,32.92],[35.10,33.09],[35.50,33.10],[35.62,33.25],[35.64,32.70],[35.50,32.60],[35.25,32.55],[35.02,32.30],[34.92,32.00],[34.70,31.86],[34.64,31.80],[34.77,32.08],[34.95,32.83]],
+ PEEL_B:[[34.72,32.07],[34.80,32.04],[35.05,31.87],[35.27,31.87],[35.29,31.67],[35.12,31.65],[34.95,31.82],[34.70,32.02]],
+ ARIEL:[[34.99,32.14],[35.20,32.13],[35.20,32.08],[34.99,32.07]],
+ ARIEL_S:[[34.99,32.135],[35.12,32.125],[35.12,32.085],[34.99,32.08]],
+ MODIIN:[[34.98,31.98],[35.09,31.97],[35.10,31.87],[34.99,31.87]],
+ JLMB:[[35.16,31.88],[35.37,31.84],[35.37,31.78],[35.25,31.75],[35.16,31.75]],
+ JLMB_S:[[35.16,31.87],[35.27,31.85],[35.27,31.78],[35.16,31.76]],
+ ETZION:[[35.05,31.72],[35.18,31.72],[35.15,31.60],[35.03,31.62]],
+ JV:[[35.46,32.43],[35.58,32.43],[35.55,31.80],[35.45,31.80]],
+ JV_WIDE:[[35.38,32.50],[35.58,32.43],[35.55,31.74],[35.45,31.50],[35.38,31.52],[35.36,31.82],[35.38,32.10]],
+ T1:[[35.24,32.08],[35.34,32.08],[35.34,32.02],[35.24,32.02]],
+ T2:[[35.12,32.23],[35.23,32.23],[35.23,32.17],[35.12,32.17]],
+ T3:[[35.07,31.47],[35.23,31.47],[35.23,31.39],[35.07,31.39]],
+ T4:[[35.20,31.57],[35.31,31.57],[35.31,31.50],[35.20,31.50]],
+ GAZA_SWAP:[[34.30,31.22],[34.43,31.20],[34.41,31.09],[34.28,31.11]],
+ HEB_SWAP:[[34.92,31.36],[35.22,31.36],[35.22,31.30],[34.96,31.30]],
+ NEGEV1:[[34.27,31.06],[34.43,31.01],[34.46,30.86],[34.31,30.86]],
+ NEGEV2:[[34.33,30.71],[34.53,30.67],[34.53,30.52],[34.36,30.55]],
+ HOLY:[[35.22,31.79],[35.25,31.79],[35.25,31.765],[35.22,31.765]],
+ DEAD:[[35.40,31.08],[35.38,31.40],[35.45,31.60],[35.52,31.77],[35.58,31.75],[35.58,31.45],[35.55,31.10],[35.48,31.03]],
+ GALILEE:[[35.52,32.85],[35.55,32.90],[35.62,32.88],[35.65,32.80],[35.60,32.70],[35.55,32.72]]
+};
+const LINES={
+ jordan:[[35.57,32.70],[35.56,32.40],[35.55,32.05],[35.54,31.78]],
+ upperJ:[[35.62,32.89],[35.62,33.10],[35.62,33.25]],
+ canal:[[32.30,31.26],[32.33,30.90],[32.27,30.60],[32.40,30.35],[32.55,29.97]],
+ barrier:[[35.27,32.54],[35.06,32.42],[35.00,32.28],[35.03,32.15],[35.17,32.11],[35.05,32.06],[35.00,31.92],[35.12,31.86],[35.30,31.82],[35.22,31.73],[35.08,31.66],[34.96,31.48],[35.05,31.38],[35.30,31.36]],
+ corridor:[[34.45,31.46],[34.70,31.47],[34.95,31.49]]
+};
+const A_SITES=[[35.30,32.46],[35.03,32.31],[34.985,32.19],[35.26,32.22],[35.20,31.90],[35.45,31.86],[35.20,31.70],[35.10,31.53]];
+const B_SITES=[[35.30,32.42,4],[35.26,32.22,4],[35.20,31.92,4],[35.10,31.52,4],[35.18,32.08,3],[35.13,32.33,3]];
+const C={land:"#2b3242",sea:"#0e3a63",lake:"#1d5d8f",river:"#59b4ee",ott:"#a07c48",brit:"#61709c",fr:"#6e5f8e",transj:"#7f6b52",egy:"#bfa868",saudi:"#4b4636",neigh:"#4d4a3c",
+ isr:"#3aa89a",arab:"#e2a43b",intl:"#b593e0",jor:"#d1813f",egyH:"#c9b06a",paA:"#f2b744",paB:"#b98535",hamas:"#e06b4f",wall:"#f1f1f1"};
+const HATCH={occ:{m:"#ff00ff",a:"#3aa89a",b:"#16403b"},war:{m:"#00ff00",a:"#d6455d",b:"#3d0f18"},zone:{m:"#00ffff",a:"#3aa89a",b:"#2b3242"},sec:{m:"#ff8000",a:"#e2a43b",b:"#3aa89a"}};
+const L={med:[33.3,32.7,"Mediterranean","sea"],sinai:[33.7,29.95,"Sinai"],egypt:[32.55,28.35,"Egypt"],saudi:[35.75,28.15,"Saudi Arabia"],
+ syria:[36.15,33.25,"Syria"],leb:[35.62,33.5,"Lebanon"],jordan:[36.05,30.6,"Jordan"],transj:[36.05,30.6,"Transjordan"],wb:[35.36,32.33,"West Bank"],
+ gaza:[34.15,31.62,"Gaza"],golan:[36.1,32.95,"Golan"],israel:[34.82,30.8,"Israel"],mandate:[34.85,30.8,"Palestine"],tiran:[34.5,27.7,"Straits of Tiran"]};
+const CITIES=[["Jerusalem",35.21,31.78],["Tel Aviv",34.78,32.08,1948],["Haifa",34.99,32.80],["Amman",35.93,31.95],["Damascus",36.29,33.51],["Eilat",34.95,29.56,1949],["Sharm el-Sheikh",34.33,27.92]];
+const STD=["med","sinai","egypt","saudi","syria","leb","jordan","wb","gaza","golan","israel","tiran"];
+function base(o){return Object.assign({east:C.neigh,transj:C.jor,sinai:C.egy,mandate:C.isr,extra:[],lines:[],labels:STD,legend:[],ab:false},o);}
+function plan(extra,legend,o){return base(Object.assign({extra:[["WB",C.arab],["GAZA",C.arab]].concat(extra),labels:["med","sinai","egypt","saudi","syria","leb","jordan","wb","gaza","israel","tiran"],legend:[[C.isr,"Israel"],[C.arab,"Proposed Palestinian state"]].concat(legend)},o||{}));}
+const SPECS={
+ ottoman:base({east:C.ott,transj:C.ott,mandate:C.ott,labels:["med","sinai","egypt","saudi"],extraLabels:[[36.0,31.6,"Ottoman Empire"]],legend:[[C.ott,"Ottoman Empire"],[C.egy,"Egypt (under British control from 1882)"]],note:"Ottoman districts. No Palestine border yet.",yr:1900}),
+ mandate:base({east:C.fr,transj:C.transj,mandate:C.brit,labels:["med","sinai","egypt","saudi","syria","leb","transj","mandate"],legend:[[C.brit,"British Mandate Palestine"],[C.transj,"Transjordan (also British)"],[C.fr,"Syria and Lebanon (French)"],[C.egy,"Egypt"]],yr:1922}),
+ peel:base({east:C.fr,transj:C.transj,mandate:C.arab,extra:[["PEEL_J",C.isr],["PEEL_B",C.brit]],labels:["med","sinai","egypt","saudi","syria","leb","transj"],legend:[[C.isr,"Proposed Jewish state (about 20%)"],[C.arab,"Arab area, to be joined to Transjordan"],[C.brit,"Stays British (Jerusalem to the sea)"]],note:"1937 Peel plan, simplified",yr:1937}),
+ partition:base({east:C.fr,transj:C.transj,extra:[["A1",C.arab],["A2",C.arab],["A3",C.arab],["A4",C.arab],["JLM",C.intl]],labels:["med","sinai","egypt","saudi","syria","leb","transj"],extraLabels:[[34.85,30.8,"Jewish state"],[35.62,31.45,"Arab state"]],legend:[[C.isr,"Proposed Jewish state (about 55%)"],[C.arab,"Proposed Arab state (about 43%)"],[C.intl,"International zone (Jerusalem)"]],note:"1947 UN plan, simplified",yr:1947}),
+ y1949:base({extra:[["WB",C.jor],["GAZA",C.egyH]],labels:STD.filter(k=>k!=="golan"),legend:[[C.isr,"Israel (1949 Green Line, about 78%)"],[C.jor,"Jordan, incl. West Bank and East Jerusalem"],[C.egyH,"Gaza, run by Egypt"]],yr:1949}),
+ suez1956:base({sinai:"occ",extra:[["WB",C.jor],["GAZA","occ"]],labels:STD.filter(k=>k!=="golan"),legend:[[C.isr,"Israel"],["occ","Held by Israel, Nov 1956 to Mar 1957"],[C.jor,"Jordan"]],yr:1956}),
+ y1967:base({sinai:"occ",extra:[["WB","occ"],["GAZA","occ"],["GOLAN","occ"]],legend:[[C.isr,"Israel (pre-1967 lines)"],["occ","Under Israeli military control after June 1967"],[C.jor,"Jordan"],[C.egy,"Egypt"]],note:"Israel annexed East Jerusalem (1967) and the Golan (1981). Most countries recognize neither.",yr:1967}),
+ y1982:base({extra:[["WB","occ"],["GAZA","occ"],["GOLAN","occ"],["SLEB","zone"]],legend:[[C.isr,"Israel"],["occ","Under Israeli military control"],["zone","Israeli-held zone in Lebanon (1982-2000)"],[C.egy,"Sinai returned to Egypt by 1982"]],yr:1982}),
+ oslo:base({extra:[["WB","occ"],["GAZA",C.paA],["GOLAN","occ"]],ab:true,legend:[[C.isr,"Israel"],["occ","Area C and other Israeli control"],[C.paA,"Area A and Palestinian-run parts of Gaza"],[C.paB,"Area B (shared control)"]],note:"Areas A and B shown as rough patches. Israel kept Gaza settlements until 2005.",yr:1995}),
+ y2005:base({extra:[["WB","occ"],["GAZA",C.paA],["GOLAN","occ"]],ab:true,lines:["barrier"],legend:[[C.isr,"Israel"],["occ","Area C and other Israeli control"],[C.paA,"Area A, and Gaza (Palestinian Authority)"],[C.paB,"Area B"],[C.wall,"Separation barrier (rough route)"]],note:"After 2005 Israel still controls Gaza's borders, airspace and sea.",yr:2005}),
+ split2007:base({extra:[["WB","occ"],["GAZA",C.hamas],["GOLAN","occ"]],ab:true,lines:["barrier"],legend:[[C.isr,"Israel"],[C.hamas,"Gaza: run by Hamas, under blockade"],[C.paA,"Area A (Abbas's Palestinian Authority)"],[C.paB,"Area B"],["occ","Area C and other Israeli control"],[C.wall,"Separation barrier"]],yr:2007}),
+ war2023:base({extra:[["WB","occ"],["GAZA","war"],["GOLAN","occ"]],ab:true,lines:["barrier"],legend:[[C.isr,"Israel"],["war","Gaza: active war zone"],[C.paA,"Area A"],[C.paB,"Area B"],["occ","Area C and other Israeli control"]],yr:2023}),
+ cease2025:base({extra:[["WB","occ"],["GAZA",C.hamas],["GAZA_E","occ"],["GOLAN","occ"]],ab:true,lines:["barrier"],legend:[[C.isr,"Israel"],["occ","Held by Israel, incl. roughly half or more of Gaza"],[C.hamas,"Rest of Gaza (Hamas still present)"],[C.paA,"Area A"],[C.paB,"Area B"]],note:"The Gaza line is approximate.",yr:2025}),
+ y2026:base({extra:[["WB","occ"],["GAZA",C.hamas],["GAZA_E","occ"],["GOLAN","occ"],["SLEB2","zone"]],ab:true,lines:["barrier"],legend:[[C.isr,"Israel"],["occ","Held by Israel, incl. roughly half or more of Gaza"],["zone","Israeli-held zone in south Lebanon (2026)"],[C.hamas,"Rest of Gaza (Hamas still present)"],[C.paA,"Area A"],[C.paB,"Area B"]],note:"Gaza and Lebanon lines are approximate.",yr:2026}),
+ api:plan([],[],{note:"Palestine on the 1967 lines (West Bank, Gaza, East Jerusalem)",yr:2002}),
+ cd2000:plan([["ARIEL",C.isr],["MODIIN",C.isr],["JLMB",C.isr],["ETZION",C.isr],["JV","sec"],["GAZA_SWAP",C.arab]],[["sec","Israeli security control for years (Jordan Valley)"]],{note:"Rough sketch. Nothing was written down at Camp David.",yr:2000}),
+ clinton:plan([["ARIEL_S",C.isr],["MODIIN",C.isr],["JLMB",C.isr],["ETZION",C.isr],["GAZA_SWAP",C.arab],["HEB_SWAP",C.arab]],[],{note:"Rough sketch: about 94-96% of the West Bank plus swaps",yr:2000}),
+ geneva:plan([["MODIIN",C.isr],["JLMB_S",C.isr],["GAZA_SWAP",C.arab],["HEB_SWAP",C.arab]],[],{note:"Rough sketch: about 2% swapped one-for-one",yr:2003}),
+ olmert:plan([["ARIEL",C.isr],["MODIIN",C.isr],["JLMB",C.isr],["ETZION",C.isr],["GAZA_SWAP",C.arab],["HEB_SWAP",C.arab],["HOLY",C.intl]],[[C.intl,"Holy sites under an international group"]],{lines:["corridor"],note:"Rough sketch: about 6% annexed, 5.8% swapped, plus a Gaza-West Bank link",yr:2008}),
+ trump20:plan([["JV_WIDE",C.isr],["ARIEL",C.isr],["MODIIN",C.isr],["JLMB",C.isr],["ETZION",C.isr],["T1",C.isr],["T2",C.isr],["T3",C.isr],["T4",C.isr],["NEGEV1",C.arab],["NEGEV2",C.arab]],[],{lines:["barrier"],note:"Rough sketch: Israel annexes about 30% of the West Bank; two Negev areas go to Palestine",yr:2020})
+};
+const BSETS=[
+ ["ottoman","Before 1917: Ottoman rule","No borders for a place called Palestine. The land is several Ottoman districts."],
+ ["mandate","1922: British Mandate","Britain draws the borders of Palestine and splits off Transjordan to the east."],
+ ["peel","1937: Peel plan (proposal)","Britain's first partition idea: a small Jewish state, the rest joined to Transjordan."],
+ ["partition","1947: UN plan (proposal)","The UN proposes about 55% for a Jewish state, 43% for an Arab state, and an international Jerusalem."],
+ ["y1949","1949: the Green Line","Where the armies stopped. Israel holds about 78%. Jordan holds the West Bank, Egypt holds Gaza."],
+ ["suez1956","1956-57: Suez","Israel briefly holds the Sinai and Gaza, then pulls out under US pressure."],
+ ["y1967","1967: after the Six-Day War","Israel takes the West Bank, East Jerusalem, Gaza, the Sinai and the Golan Heights."],
+ ["y1982","1982: Sinai returned","Sinai goes back to Egypt after the peace treaty. Israel holds a zone in south Lebanon until 2000."],
+ ["oslo","1995: Oslo Areas A, B, C","Palestinian self-rule in patches. Israel fully controls Area C, about 60% of the West Bank."],
+ ["cd2000","2000: Camp David offer (proposal)","Barak's reported offer: about 90-91% of the West Bank plus Gaza."],
+ ["clinton","2000: Clinton Parameters (proposal)","About 94-96% of the West Bank, plus land swaps."],
+ ["api","2002: 1967 lines (Arab Peace Initiative, proposal)","Palestine on all of the West Bank, Gaza and East Jerusalem."],
+ ["geneva","2003: Geneva Initiative (unofficial)","1967 lines with about 2% swapped one-for-one."],
+ ["y2005","2005: Gaza pullout and the barrier","Israel leaves Gaza but controls its borders. The West Bank barrier goes up."],
+ ["split2007","2007: Hamas-Fatah split","Hamas runs Gaza; Abbas's Palestinian Authority runs Areas A and B."],
+ ["olmert","2008: Olmert offer (proposal)","About 6% annexed, 5.8% given back in swaps, holy sites shared internationally."],
+ ["trump20","2020: Trump plan (proposal)","Israel annexes about 30% of the West Bank; Palestine gets the rest in pieces plus two Negev areas."],
+ ["war2023","2023-25: Gaza war","Gaza becomes a war zone."],
+ ["cease2025","Late 2025: Gaza ceasefire lines","Israel holds a large part of Gaza under the ceasefire."],
+ ["y2026","2026: after the Iran and Lebanon wars","Israel holds a large part of Gaza and roughly a fifth of Lebanon."]
+];
+const QUICK=[["y1949","cd2000","Green Line vs. Camp David 2000"],["partition","y1949","UN plan vs. what Israel held in 1949"],["y1949","y1967","Before vs. after 1967"],["clinton","trump20","Clinton 2000 vs. Trump 2020"],["api","olmert","1967 lines vs. Olmert 2008"],["oslo","cease2025","Oslo vs. today"]];
+
+/* ---------- rendering ---------- */
+function poly(ctx,pts,col){ctx.fillStyle=col;ctx.beginPath();pts.forEach((p,i)=>{const x=X(p[0]),y=Y(p[1]);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.closePath();ctx.fill();}
+const fk=k=>HATCH[k]?HATCH[k].m:k;
+const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+function plotLine(ctx,pts,col){ctx.fillStyle=col;for(let i=1;i<pts.length;i++){const x0=X(pts[i-1][0]),y0=Y(pts[i-1][1]),x1=X(pts[i][0]),y1=Y(pts[i][1]);const n=(Math.max(Math.abs(x1-x0),Math.abs(y1-y0))*1.5|0)||1;for(let s=0;s<=n;s++)ctx.fillRect(Math.round(x0+(x1-x0)*s/n),Math.round(y0+(y1-y0)*s/n),1,1);}}
+const cache={};
+function renderSpec(key){
+  if(cache[key])return cache[key];
+  const m=SPECS[key];const cv=document.createElement("canvas");cv.width=W;cv.height=H;const cx=cv.getContext("2d",{willReadFrequently:true});
+  poly(cx,[[31.9,33.8],[36.7,33.8],[36.7,27.3],[31.9,27.3]],C.land);
+  poly(cx,P.EAST,m.east);poly(cx,P.TRANSJ,m.transj);poly(cx,P.SAUDI,C.saudi);poly(cx,P.EGYPT,C.egy);
+  poly(cx,P.SINAI,fk(m.sinai));poly(cx,P.MANDATE,fk(m.mandate));
+  m.extra.forEach(([k,c])=>poly(cx,P[k],fk(c)));
+  if(m.ab){B_SITES.forEach(([lo,la,r])=>{cx.fillStyle=C.paB;cx.beginPath();cx.arc(X(lo),Y(la),r,0,7);cx.fill();});A_SITES.forEach(([lo,la])=>{cx.fillStyle=C.paA;cx.beginPath();cx.arc(X(lo),Y(la),1.8,0,7);cx.fill();});}
+  poly(cx,P.MED,C.sea);poly(cx,P.SOUTHSEA,C.sea);poly(cx,P.DEAD,C.lake);poly(cx,P.GALILEE,C.lake);
+  const pal=[C.land,C.sea,C.lake,m.east,m.transj,C.saudi,C.egy,fk(m.sinai),fk(m.mandate)].concat(m.extra.map(e=>fk(e[1])));if(m.ab)pal.push(C.paA,C.paB);
+  const pr=[...new Set(pal)].map(hex);const hm={};Object.values(HATCH).forEach(h=>hm[h.m.toLowerCase()]=h);
+  const img=cx.getImageData(0,0,W,H),d=img.data;
+  for(let i=0;i<d.length;i+=4){let best=0,bd=1e9;for(let j=0;j<pr.length;j++){const r=d[i]-pr[j][0],g=d[i+1]-pr[j][1],b=d[i+2]-pr[j][2],dd=r*r+g*g+b*b;if(dd<bd){bd=dd;best=j;}}
+    let c=pr[best];const hx="#"+c.map(v=>v.toString(16).padStart(2,"0")).join("");
+    if(hm[hx]){const px=(i/4)%W,py=(i/4/W)|0;c=hex(((px+py)%3===0)?hm[hx].b:hm[hx].a);}
+    d[i]=c[0];d[i+1]=c[1];d[i+2]=c[2];d[i+3]=255;}
+  cx.putImageData(img,0,0);
+  plotLine(cx,LINES.jordan,C.river);plotLine(cx,LINES.upperJ,C.river);plotLine(cx,LINES.canal,C.river);
+  (m.lines||[]).forEach(k=>plotLine(cx,LINES[k],k==="corridor"?"#ffd166":C.wall));
+  cache[key]=cv;return cv;
+}
+function drawInto(canvas,key){const c=canvas.getContext("2d");c.clearRect(0,0,W,H);c.drawImage(renderSpec(key),0,0);}
+function drawDiff(canvas,a,b){
+  const A=renderSpec(a).getContext("2d").getImageData(0,0,W,H).data,B=renderSpec(b).getContext("2d").getImageData(0,0,W,H).data;
+  const c=canvas.getContext("2d");const out=c.createImageData(W,H),o=out.data;
+  for(let i=0;i<A.length;i+=4){const same=A[i]===B[i]&&A[i+1]===B[i+1]&&A[i+2]===B[i+2];const px=(i/4)%W,py=(i/4/W)|0;
+    if(same){o[i]=A[i]*.55|0;o[i+1]=A[i+1]*.55|0;o[i+2]=A[i+2]*.55|0;}
+    else if((px+py)%4<2){o[i]=B[i];o[i+1]=B[i+1];o[i+2]=B[i+2];}else{o[i]=255;o[i+1]=255;o[i+2]=255;}
+    o[i+3]=255;}
+  c.putImageData(out,0,0);
+}
+function swatch(k){const s=document.createElement("span");s.className="sw";s.style.background=HATCH[k]?`repeating-linear-gradient(45deg,${HATCH[k].a} 0 3px,${HATCH[k].b} 3px 5px)`:k;return s;}
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;};
+function fillLegend(box,key,extra){box.textContent="";const m=SPECS[key];m.legend.forEach(([k,t])=>{const s=el("span");s.appendChild(swatch(k));s.appendChild(el("span",null,t));box.appendChild(s);});(extra||[]).forEach(n=>box.appendChild(n));}
+function pct(lon,lat){return [X(lon)/W*100,Y(lat)/H*100];}
+function addLbl(layer,lon,lat,txt,cls){const [x,y]=pct(lon,lat);const e=el("div","lbl"+(cls?" "+cls:""),txt);e.style.left=x+"%";e.style.top=y+"%";layer.appendChild(e);}
+function fillLabels(layer,key,sign){layer.textContent="";const m=SPECS[key];m.labels.forEach(k=>{const l=L[k];addLbl(layer,l[0],l[1],l[2],l[3]);});(m.extraLabels||[]).forEach(l=>addLbl(layer,l[0],l[1],l[2]));
+  CITIES.forEach(c=>{if(!c[3]||m.yr>=c[3])addLbl(layer,c[1],c[2],c[0],"city");});if(sign)addLbl(layer,sign[0],sign[1],sign[2],"sign"+(sign[3]||""));}
+function makeFrame(){const f=el("div","mapfrm");const cv=document.createElement("canvas");cv.width=W;cv.height=H;f.appendChild(cv);f.appendChild(el("div","labels"));return f;}
+
+/* ---------- walker ---------- */
+const tmap=document.getElementById("tmap"),tcv=tmap.querySelector("canvas"),wcv=tmap.querySelector("canvas.walk"),wx=wcv.getContext("2d"),tlabels=tmap.querySelector(".labels");
+const SPR=[["..hhh..","..sss..","..sss..",".pcccs.",".pccc..",".pccc..","..lll..","..l.l..",".l...l.",".b...b."],["..hhh..","..sss..","..sss..",".pccc..",".pcccs.",".pccc..","..lll..","..ll...","..ll...","..bb..."]];
+const SC={h:"#4a2f17",s:"#f2c9a0",c:"#ffd166",p:"#8a5a2b",l:"#2f5a9a",b:"#111"};
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;let wpos=null,anim=null,face=1;
+function drawWalker(x,y,f){wx.clearRect(0,0,252,420);const spr=SPR[f],ox=Math.round(x)-3,oy=Math.round(y)-10;
+  wx.fillStyle="#000";for(let r=0;r<10;r++)for(let c=0;c<7;c++){if(spr[r][face>0?c:6-c]!=="."){wx.fillRect(ox+c-1,oy+r,3,1);wx.fillRect(ox+c,oy+r-1,1,3);}}
+  for(let r=0;r<10;r++)for(let c=0;c<7;c++){const ch=spr[r][face>0?c:6-c];if(ch!=="."){wx.fillStyle=SC[ch];wx.fillRect(ox+c,oy+r,1,1);}}}
+const awayPt=loc=>loc.side==="n"?[34.99,32.84]:loc.side==="e"?[36.25,32.3]:[34.88,32.0];
+function walkTo(loc){const p=Array.isArray(loc)?loc:awayPt(loc);const tx=X(p[0])*2,ty=Y(p[1])*2;if(anim)cancelAnimationFrame(anim);
+  if(!wpos||reduce){wpos=[tx,ty];drawWalker(tx,ty,0);return;}
+  const [sx,sy]=wpos,dist=Math.hypot(tx-sx,ty-sy);if(dist<1){drawWalker(tx,ty,0);return;}
+  face=tx>=sx?1:-1;const dur=Math.min(1600,Math.max(450,dist*9)),t0=performance.now();
+  const step=t=>{t=Math.max(t,t0);const k=Math.min(1,(t-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,x=sx+(tx-sx)*e,y=sy+(ty-sy)*e;wpos=[x,y];drawWalker(x,y,k<1?Math.floor((t-t0)/140)%2:0);if(k<1)anim=requestAnimationFrame(step);};
+  anim=requestAnimationFrame(step);}
+
+/* ---------- timeline ---------- */
+const KIND={war:["war","at war with"],fighting:["armed","fighting"],uprising:["armed","rising up against"],attacks:["armed","attacking"],crackdown:["armed","cracking down on"],
+ ceasefire:["truce","ceasefire with"],armistice:["truce","armistice with"],peace:["peace","at peace with"],standoff:["neutral","standoff with"],rules:["neutral","in charge of"]};
+function srcItem(k){const s=S[k];if(!s)return null;const li=el("li");li.appendChild(el("span","tag",s.k));
+  if(s.u){const a=el("a",null,s.t);a.href=s.u;a.target="_blank";a.rel="noopener";li.appendChild(a);}else li.appendChild(el("span",null,s.t));
+  if(s.lk){li.appendChild(document.createTextNode(" "));li.appendChild(el("span","persp","["+s.lk+"]"));}
+  if(s.side){li.appendChild(document.createTextNode(" "));li.appendChild(el("span","persp","("+s.side+")"));}return li;}
+function srcList(keys){const ul=el("ul","src");[...new Set(keys||[])].forEach(k=>{const li=srcItem(k);if(li)ul.appendChild(li);});return ul;}
+function refs(keys){const d=el("div","refs");(keys||[]).forEach(k=>{const s=S[k];if(!s)return;let a;if(s.u){a=el("a",null,s.t);a.href=s.u;a.target="_blank";a.rel="noopener";}else a=el("span",null,s.t);d.appendChild(a);});return d;}
+const story=document.getElementById("story"),road=document.getElementById("road");const seen=new Set();let cur=0,lastKey=null;
+STOPS.forEach((s,i)=>{const li=el("li"),b=el("button","stopbtn");b.type="button";b.title=s.title;b.appendChild(el("span","dot"));b.appendChild(el("span","yr",s.yr));b.onclick=()=>goStop(i,null,true);li.appendChild(b);road.appendChild(li);});
+const btns=[...road.querySelectorAll(".stopbtn")];
+function renderStory(i,pi){
+  const s=STOPS[i];story.textContent="";
+  story.appendChild(el("p","crumb","Stop "+(i+1)+" of "+STOPS.length+"  /  "+s.yr));
+  if(pi!=null&&s.paths[pi]){const p=s.paths[pi];
+    const back=el("button","back","< Back to "+s.title);back.type="button";back.onclick=()=>goStop(i,null,true);story.appendChild(back);
+    story.appendChild(el("h2",null,p.t));const b=el("div","pathbody");p.body.forEach(t=>b.appendChild(el("p",null,t)));story.appendChild(b);
+    if(p.src&&p.src.length){story.appendChild(el("h3",null,"Sources"));story.appendChild(srcList(p.src));}
+    const others=s.paths.map((q,j)=>[q,j]).filter(x=>x[1]!==pi);
+    if(others.length){story.appendChild(el("h3",null,"More to explore here"));const ul=el("ul","deeper");others.forEach(([q,j])=>ul.appendChild(deepLink(q,i,j)));story.appendChild(ul);}
+    return;}
+  story.appendChild(el("h2",null,s.title));
+  story.appendChild(el("h3",null,"What happened")).style.marginTop="6px";
+  const ul=el("ul","facts");s.facts.forEach(f=>ul.appendChild(el("li",null,f)));story.appendChild(ul);
+  if(s.paths&&s.paths.length){story.appendChild(el("h3",null,"Go deeper"));const ul2=el("ul","deeper");s.paths.forEach((p,j)=>ul2.appendChild(deepLink(p,i,j)));story.appendChild(ul2);}
+  if(s.disputes&&s.disputes.length){story.appendChild(el("h3",null,"Where people disagree"));
+    s.disputes.forEach(c=>{const d=el("div","dispute");d.appendChild(el("h4",null,c.q));c.views.forEach(v=>{const vv=el("div","view");vv.appendChild(el("b",null,v.who));if(v.text)vv.appendChild(el("p",null,v.text));if(v.pts){const ul=el("ul","vpts");v.pts.forEach(([l,t])=>{const li=el("li");li.appendChild(el("span","vl",l+": "));li.appendChild(document.createTextNode(t));ul.appendChild(li);});vv.appendChild(ul);}if(v.src&&v.src.length)vv.appendChild(refs(v.src));d.appendChild(vv);});story.appendChild(d);});}
+  story.appendChild(el("h3",null,"Sources"));story.appendChild(srcList(s.src));
+}
+function deepLink(p,i,j){const li=el("li"),b=el("button",null,p.t);b.type="button";b.onclick=()=>goStop(i,j,true);li.appendChild(b);return li;}
+function renderSide(s){
+  if(lastKey!==s.map){drawInto(tcv,s.map);lastKey=s.map;}
+  const sign=Array.isArray(s.loc)?null:awayPt(s.loc).concat(["Off the map: "+s.loc.away,s.loc.side==="e"?" e":""]);
+  fillLabels(tlabels,s.map,sign);
+  document.getElementById("tnote").textContent=SPECS[s.map].note||"Simplified map, not to scale";
+  fillLegend(document.getElementById("tlegend"),s.map);
+  document.getElementById("fightLead").textContent=s.fight;
+  const mu=document.getElementById("matchups");mu.textContent="";
+  s.status.forEach(([a,k,b])=>{const kk=KIND[k]||["neutral",k];const li=el("li");li.appendChild(el("span",null,a));const r=el("span","rel "+kk[0]);r.appendChild(el("i"));r.appendChild(document.createTextNode(kk[1]));li.appendChild(r);li.appendChild(el("span","b",b||""));mu.appendChild(li);});
+}
+function goStop(i,pi,push){
+  i=Math.max(0,Math.min(STOPS.length-1,i));cur=i;seen.add(i);const s=STOPS[i];
+  btns.forEach((b,j)=>{if(j===i)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current");b.classList.toggle("seen",seen.has(j));});
+  btns[i].scrollIntoView({block:"nearest",inline:"center",behavior:reduce?"auto":"smooth"});
+  renderSide(s);renderStory(i,pi);walkTo(s.loc);
+  document.getElementById("count").textContent=(i+1)+" / "+STOPS.length;
+  document.getElementById("prev").disabled=i===0;document.getElementById("next").disabled=i===STOPS.length-1;
+  if(push){setHash(s.id+(pi!=null?"-p"+(pi+1):""));const top=story.getBoundingClientRect().top;if(top<0||top>innerHeight)story.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});}
+}
+document.getElementById("prev").onclick=()=>goStop(cur-1,null,true);
+document.getElementById("next").onclick=()=>goStop(cur+1,null,true);
+
+/* ---------- borders ---------- */
+const selA=document.getElementById("selA"),selB=document.getElementById("selB"),bmaps=document.getElementById("bmaps");let mode="overlay";
+BSETS.forEach(([k,t])=>{selA.appendChild(new Option(t,k));});
+selB.appendChild(new Option("Nothing (single map)",""));BSETS.forEach(([k,t])=>selB.appendChild(new Option(t,k)));
+selA.value="y1949";selB.value="cd2000";
+const bdesc=k=>(BSETS.find(b=>b[0]===k)||["","",""])[2];
+function renderBorders(){
+  const a=selA.value,b=selB.value;bmaps.textContent="";
+  document.getElementById("descA").textContent=bdesc(a);document.getElementById("descB").textContent=b?bdesc(b):"";
+  document.getElementById("modeWrap").hidden=!b;
+  document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.mode===mode)));
+  const fig=(key,cap,diff)=>{const f=el("figure");const fr=makeFrame();const cv=fr.querySelector("canvas");if(diff)drawDiff(cv,a,b);else drawInto(cv,key);fillLabels(fr.querySelector(".labels"),key);f.appendChild(fr);f.appendChild(el("figcaption",null,cap));bmaps.appendChild(f);};
+  const nameOf=k=>(BSETS.find(x=>x[0]===k)||["",k])[1];
+  const lg=document.getElementById("blegend");
+  if(!b){fig(a,nameOf(a));fillLegend(lg,a);bmaps.style.gridTemplateColumns="minmax(0,400px)";return;}
+  if(mode==="side"){fig(a,nameOf(a));fig(b,nameOf(b));bmaps.style.gridTemplateColumns="";
+    const extra=[el("span",null,"Colors on the second map:")];SPECS[b].legend.forEach(([k,t])=>{const s=el("span");s.appendChild(swatch(k));s.appendChild(el("span",null,t));extra.push(s);});fillLegend(lg,a,extra);return;}
+  fig(a,nameOf(a)+"  →  "+nameOf(b),true);bmaps.style.gridTemplateColumns="minmax(0,400px)";
+  const n1=el("span");const sw=el("span","sw");sw.style.background="repeating-linear-gradient(45deg,#fff 0 3px,#e2a43b 3px 6px)";n1.appendChild(sw);n1.appendChild(el("span",null,"Striped areas change under the second map. The stripe color shows what they become."));
+  const n2=el("span");const sw2=el("span","sw");sw2.style.background="#555";n2.appendChild(sw2);n2.appendChild(el("span",null,"Darkened areas stay the same."));
+  lg.textContent="";lg.appendChild(n1);lg.appendChild(n2);lg.appendChild(el("span",null,"Colors in the second map:"));SPECS[b].legend.forEach(([k,t])=>{const s=el("span");s.appendChild(swatch(k));s.appendChild(el("span",null,t));lg.appendChild(s);});
+}
+selA.onchange=renderBorders;selB.onchange=renderBorders;
+document.querySelectorAll(".seg button").forEach(x=>x.onclick=()=>{mode=x.dataset.mode;renderBorders();});
+const quick=document.getElementById("quick");QUICK.forEach(([a,b,t])=>{const q=el("button",null,t);q.type="button";q.onclick=()=>{selA.value=a;selB.value=b;renderBorders();};quick.appendChild(q);});
+
+/* ---------- plans ---------- */
+const cmp=document.getElementById("cmpBody"),plist=document.getElementById("planList");
+PLANS.forEach(p=>{
+  const tr=el("tr");const td=el("td");const a=el("a",null,p.name+", "+p.yr);a.href="#plans";a.onclick=e=>{e.preventDefault();document.getElementById("plan-"+p.id).scrollIntoView({behavior:reduce?"auto":"smooth"});};td.appendChild(a);tr.appendChild(td);
+  tr.appendChild(el("td",null,p.land));tr.appendChild(el("td",null,p.jer));tr.appendChild(el("td",null,p.outcome));cmp.appendChild(tr);
+  const sec=el("section","plan");sec.id="plan-"+p.id;
+  if(p.map){const fr=makeFrame();drawInto(fr.querySelector("canvas"),p.map);sec.appendChild(fr);}else sec.appendChild(el("div","nomap","No map was ever published"));
+  const body=el("div");body.style.minWidth="0";body.appendChild(el("h3",null,p.name+" ("+p.yr+")"));body.appendChild(el("p","by","Proposed by "+p.by));
+  const dl=el("dl","terms");[["Land",p.land],["Jerusalem",p.jer],["Refugees",p.ref],["Security",p.sec],["What happened",p.outcome]].forEach(([t,v])=>{dl.appendChild(el("dt",null,t));dl.appendChild(el("dd",null,v));});body.appendChild(dl);
+  const ctx=el("div","ctx");p.context.forEach(c=>ctx.appendChild(el("p",null,c)));body.appendChild(ctx);
+  if(p.map&&p.map!=="y1949"){const act=el("p","act");const ab=el("a",null,"Compare this map with the Green Line >");ab.href="#borders";ab.onclick=e=>{e.preventDefault();selA.value="y1949";selB.value=p.map;mode="overlay";setHash("borders");route();};act.appendChild(ab);body.appendChild(act);}
+  if(p.src&&p.src.length){body.appendChild(el("p","label","Sources"));body.appendChild(srcList(p.src));}
+  sec.appendChild(body);plist.appendChild(sec);
+});
+
+
+/* ---------- leaders ---------- */
+(function(){
+  const LD=window.LEADERS,YRS=window.LEADER_YEARS,PER=window.LEADER_PERIODS,jump=document.getElementById("ljump"),body=document.getElementById("lbody");
+  const groups=LD.main.concat(LD.other);
+  const ov=(rs,a,b)=>(rs||[]).some(([x,y])=>x<=b&&y>=a);
+  const row=el("div");row.appendChild(el("b",null,"Jump to"));
+  PER.forEach((p,pi)=>{const a=el("a",null,p.y[0]+"-"+(p.y[1]===2026?"now":p.y[1]));a.href="#leaders";a.title=p.t;a.onclick=e=>{e.preventDefault();document.getElementById("per-"+pi).scrollIntoView({behavior:reduce?"auto":"smooth"});};row.appendChild(a);});
+  jump.appendChild(row);
+  const tog=el("div");const ex=el("button","textbtn","Expand all");ex.type="button";const co=el("button","textbtn","Collapse all");co.type="button";
+  ex.onclick=()=>body.querySelectorAll("details").forEach(d=>d.open=true);co.onclick=()=>body.querySelectorAll("details").forEach(d=>d.open=false);
+  tog.appendChild(ex);tog.appendChild(co);jump.appendChild(tog);
+  PER.forEach((per,pi)=>{
+    const sec=el("section","lperiod");sec.id="per-"+pi;
+    const h=el("h2","lgroup");h.appendChild(el("span","pyrs",per.y[0]+" to "+(per.y[1]===2026?"today":per.y[1])));h.appendChild(document.createTextNode(per.t));sec.appendChild(h);
+    sec.appendChild(el("p","pdesc",per.d));
+    groups.forEach(g=>{
+      const ppl=g.p.filter(p=>ov(YRS[p.n],per.y[0],per.y[1]));if(!ppl.length)return;
+      const cg=el("div","lcountry");cg.appendChild(el("h3",null,g.c));
+      ppl.forEach(p=>{
+        const d=el("details","person");const sm=el("summary");sm.appendChild(el("span","pname",p.n));sm.appendChild(el("span","role",p.r+", "+p.y));d.appendChild(sm);
+        const dl=el("dl");[["Known for",p.k],["Failures and controversies",p.f],["On land and borders",p.land],["On religion, ethnicity and identity",p.id]].forEach(([t,v])=>{if(!v)return;dl.appendChild(el("dt",null,t));dl.appendChild(el("dd",null,v));});
+        if(p.s&&p.s.length){const dd=el("dd");dd.appendChild(refs(p.s));dl.appendChild(dd);}
+        d.appendChild(dl);cg.appendChild(d);});
+      sec.appendChild(cg);});
+    body.appendChild(sec);});
+})();
+/* ---------- human cost ---------- */
+(function(){
+  const CO=window.COST;const CAT={israel:["#4f7cff","By Israeli forces, police or civilians"],arab:["#e0654a","By Palestinian, Arab or Iran-aligned groups"],war:["#8a8f99","Wars and clashes between both sides"],intra:["#b593e0","Between other parties, or within one side"]};
+  const MET=[["k","Killed",100,"#c23b32"],["inj","Injured",1000,"#e8a23a"],["disp","Forced from homes",10000,"#3f86d6"],["arr","Arrested or held",1000,"#9a6ad8"],["homes","Homes destroyed",1000,"#7f8a3a"]];
+  const cb=document.getElementById("cblocks"),key=document.getElementById("ckey"),cnote=document.getElementById("cnote");
+  const fmt=n=>n.toLocaleString("en-US");
+  const squares=(n,unit,col)=>{const d=el("div","sq");if(!n)return d;const full=Math.round(n/unit);
+    if(full<1){const t=el("i","tiny");t.style.background=col;d.appendChild(t);return d;}
+    const f=document.createDocumentFragment();for(let k=0;k<full;k++){const i=document.createElement("i");i.style.background=col;f.appendChild(i);}d.appendChild(f);return d;};
+  MET.forEach(([k,t,unit,col])=>{const sp=el("span");const i=el("i","sqG");i.style.background=col;sp.appendChild(i);sp.appendChild(document.createTextNode(t+" (1 = "+fmt(unit)+")"));key.appendChild(sp);});
+  {const sp=el("span");sp.appendChild(el("i","sqG tiny"));sp.appendChild(document.createTextNode("small square = fewer than one full square"));key.appendChild(sp);}
+  cnote.textContent="Each square is a group of people (or homes), and the colors use different scales, so compare squares of the same color. Death tolls are the firmest numbers; the rest are rougher estimates from the UN, rights groups or governments, listed in the sources for each event below. A kind of harm is left out where no reliable figure exists.";
+  CO.blocks.forEach(b=>{const bl=el("div","cblock");bl.appendChild(el("h3",null,b.t));
+    [["a"],["b"]].forEach(([side])=>{const r=el("div","crow "+side);const lab=el("div","clab");lab.appendChild(el("b",null,b[side].l));r.appendChild(lab);
+      const ml=el("div","mlist");
+      MET.forEach(([mk,mt,unit,col])=>{const v=mk==="k"?b[side]:(b[mk]&&b[mk][side]);if(!v||!v.x){if(mk==="k"){const ln=el("div","mline");ln.appendChild(el("div","mfig",mt+": no reliable figure"));ml.appendChild(ln);}return;}
+        const ln=el("div","mline");const fg=el("div","mfig");const tag=el("span","mtag",mt);tag.style.color=col;fg.appendChild(tag);fg.appendChild(document.createTextNode(" "+v.x));ln.appendChild(fg);
+        if(v.n)ln.appendChild(squares(v.n,unit,col));ml.appendChild(ln);});
+      r.appendChild(ml);bl.appendChild(r);});
+    bl.appendChild(el("p","cwho","Death toll count: "+b.w+(b.note?". "+b.note:"")));if(b.src&&b.src.length){const r=refs(b.src);r.classList.add("csrc");bl.appendChild(r);}cb.appendChild(bl);});
+  const log=document.getElementById("clog"),fl=document.getElementById("cfilter"),ft=document.getElementById("ctype");let cur="all",typ="all";
+  const draw=()=>{log.textContent="";CO.events.forEach(e=>{if(cur!=="all"&&e.cat!==cur)return;if(typ==="dead"&&e.nl)return;if(typ==="nl"&&!e.nl)return;
+    const d=el("details","cev");const sm=el("summary");sm.appendChild(el("span","when",e.d));
+    const mk=el("span","mk");const sq=el("i");const n=e.kn||1;const sz=Math.round(6+7*Math.log10(Math.max(1,n)));sq.style.width=sq.style.height=sz+"px";
+    if(e.nl){sq.className="hol";sq.style.borderColor=CAT[e.cat][0];}else sq.style.background=CAT[e.cat][0];sq.title=CAT[e.cat][1];mk.appendChild(sq);sm.appendChild(mk);
+    const line=e.k?"Killed: "+e.k:e.ar?"Arrested or held: "+e.ar:e.dp?"Forced from homes: "+e.dp:e.hm?"Homes destroyed: "+e.hm:"";
+    const tt=el("span");tt.appendChild(el("span","ttl",e.t));if(line)tt.appendChild(el("span","kl",line));sm.appendChild(tt);d.appendChild(sm);
+    const body=el("div","body");const dl=el("dl");[["Who did it",CAT[e.cat][1].replace(/^By /,"")+". "+e.by],["Who was harmed",e.vic],["Killed",e.k],["Injured",e.i],["Forced from homes",e.dp],["Arrested or held",e.ar],["Homes destroyed",e.hm]].forEach(([t,v])=>{if(!v)return;dl.appendChild(el("dt",null,t));dl.appendChild(el("dd",null,v));});body.appendChild(dl);
+    if(e.n)body.appendChild(el("p","note",e.n));if(e.src&&e.src.length)body.appendChild(refs(e.src));d.appendChild(body);log.appendChild(d);});};
+  const chips=(box,list,set)=>list.forEach(([k,t,c,hol])=>{const bt=el("button");bt.type="button";if(c||hol){const i=el("i");if(hol){i.style.border="2px solid var(--ink)";i.style.background="none";}else i.style.background=c;bt.appendChild(i);}bt.appendChild(document.createTextNode(t));bt.setAttribute("aria-pressed",String(k==="all"));bt.onclick=()=>{set(k);box.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===bt)));draw();};box.appendChild(bt);});
+  chips(fl,[["all","Everyone",null]].concat(Object.entries(CAT).map(([k,v])=>[k,v[1],v[0]])),k=>cur=k);
+  chips(ft,[["all","All kinds of events"],["dead","Deadly attacks and wars","var(--ink)"],["nl","Raids, arrests, demolitions, expulsions",null,true]],k=>typ=k);
+  draw();
+})();
+/* ---------- routing ---------- */
+const VIEWS=["timeline","borders","plans","leaders","cost","about"];
+function setHash(h){try{history.replaceState(null,"","#"+h);}catch(e){location.hash=h;}}
+function show(v){VIEWS.forEach(x=>{document.getElementById("view-"+x).hidden=x!==v;});document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.dataset.tab===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});document.getElementById("foot").hidden=v!=="timeline";}
+let timelineStarted=false;
+function route(){
+  const h=(location.hash||"").slice(1);
+  if(VIEWS.includes(h)&&h!=="timeline"){show(h);if(h==="borders")renderBorders();return;}
+  show("timeline");const m=h.match(/^(.*?)(?:-p(\d+))?$/);const i=STOPS.findIndex(s=>s.id===m[1]);
+  if(i<0){if(!timelineStarted)goStop(0,null,false);timelineStarted=true;return;}
+  timelineStarted=true;goStop(i,m[2]?parseInt(m[2],10)-1:null,false);
+}
+document.querySelectorAll("nav.tabs a").forEach(a=>a.onclick=e=>{e.preventDefault();const t=a.dataset.tab;if(t==="timeline"){setHash(STOPS[cur].id);}else setHash(t);route();scrollTo(0,0);});
+addEventListener("hashchange",route);
+addEventListener("keydown",e=>{if(document.getElementById("view-timeline").hidden)return;if(e.target.closest&&e.target.closest("select,input,textarea"))return;if(e.key==="ArrowRight")goStop(cur+1,null,true);else if(e.key==="ArrowLeft")goStop(cur-1,null,true);});
+route();
+})();
+</script>
+
+</body>
+</html>
