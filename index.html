@@ -243,6 +243,19 @@ details.cev summary::-webkit-details-marker{display:none}
 .about h3{font-family:var(--f-term);font-size:21px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);font-weight:400;margin:30px 0 8px}
 .about ul{padding-left:20px}
 .about li{margin-bottom:6px}
+/* map hover tooltip */
+#tmap{cursor:crosshair}
+.maphint{font-size:13.5px;line-height:1.35;color:var(--dim);margin:4px 0 0}
+.maptip{position:fixed;z-index:40;pointer-events:none;width:min(300px,calc(100vw - 24px));background:var(--bg);color:var(--ink);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--line);padding:10px 12px;font-size:14px;line-height:1.4}
+.maptip .mt{display:block;font-family:var(--f-head);font-weight:400;font-size:26px;line-height:1.05;margin-bottom:4px}
+.maptip .ml{display:block;font-family:var(--f-term);font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin-top:8px}
+.maptip p{margin:0}
+.maptip .pb{display:flex;height:12px;margin:5px 0 4px;border:1px solid var(--frame)}
+.maptip .pb i{display:block;height:100%}
+.maptip ul{list-style:none;margin:0;padding:0;font-size:13.5px}
+.maptip li{display:flex;gap:6px;align-items:center}
+.maptip li i{flex:none;width:10px;height:10px;border:1px solid var(--frame)}
+.maptip .pn{font-size:12.5px;color:var(--dim);margin-top:4px}
 /* intro page */
 .logo a{color:inherit;text-decoration:none}
 .intropage{max-width:70ch;margin:0 auto;padding-top:clamp(28px,6vw,64px)}
@@ -330,6 +343,7 @@ body[data-view="timeline"] .toc{bottom:calc(80px + env(safe-area-inset-bottom,0p
         <div>
           <div class="mapfrm" id="tmap"><canvas width="126" height="210"></canvas><canvas class="walk" width="252" height="420"></canvas><div class="labels"></div></div>
           <p class="mapnote" id="tnote"></p>
+          <p class="maphint">Point at (or tap) the map to see who controls that area and who lived there.</p>
         </div>
         <div class="legend" id="tlegend"></div>
         <div class="fight">
@@ -451,6 +465,7 @@ body[data-view="timeline"] .toc{bottom:calc(80px + env(safe-area-inset-bottom,0p
 <script src="leaders.js"></script>
 <script src="cost.js"></script>
 <script src="cost2.js"></script>
+<script src="pop.js"></script>
 <script>
 (function(){
 "use strict";
@@ -681,7 +696,7 @@ function goStop(i,pi,push){
   i=Math.max(0,Math.min(STOPS.length-1,i));cur=i;seen.add(i);const s=STOPS[i];
   btns.forEach((b,j)=>{if(j===i)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current");b.classList.toggle("seen",seen.has(j));});
   btns[i].scrollIntoView({block:"nearest",inline:"center",behavior:reduce?"auto":"smooth"});
-  renderSide(s);renderStory(i,pi);walkTo(s.loc);tocRefresh("timeline");
+  tip.hidden=true;renderSide(s);renderStory(i,pi);walkTo(s.loc);tocRefresh("timeline");
   document.getElementById("count").textContent=(i+1)+" / "+STOPS.length;
   document.getElementById("prev").disabled=i===0;document.getElementById("next").disabled=i===STOPS.length-1;
   if(push){setHash(s.id+(pi!=null?"-p"+(pi+1):""));const top=story.getBoundingClientRect().top;if(top<0||top>innerHeight)story.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});}
@@ -689,6 +704,68 @@ function goStop(i,pi,push){
 document.getElementById("prev").onclick=()=>goStop(cur-1,null,true);
 document.getElementById("next").onclick=()=>goStop(cur+1,null,true);
 
+/* ---------- timeline map hover ---------- */
+const tip=el("div","maptip");tip.hidden=true;tip.setAttribute("role","status");document.body.appendChild(tip);
+function pip(pg,lon,lat){let ins=false;for(let i=0,j=pg.length-1;i<pg.length;j=i++){const a=pg[i],b=pg[j];if((a[1]>lat)!==(b[1]>lat)&&lon<(b[0]-a[0])*(lat-a[1])/(b[1]-a[1])+a[0])ins=!ins;}return ins;}
+function regionAt(key,lon,lat,px,py){
+  const m=SPECS[key],inP=n=>P[n]&&pip(P[n],lon,lat);
+  if(inP("MED")||inP("SOUTHSEA"))return {k:"SEA"};
+  if(inP("DEAD")||inP("GALILEE"))return {k:"LAKE"};
+  if(m.ab){for(const [lo,la] of A_SITES)if(Math.hypot(px-X(lo),py-Y(la))<=2.2)return {k:"AREA_A",c:C.paA};
+    for(const [lo,la,r] of B_SITES)if(Math.hypot(px-X(lo),py-Y(la))<=r)return {k:"AREA_B",c:C.paB};}
+  for(let i=m.extra.length-1;i>=0;i--){const [k,c]=m.extra[i];if(inP(k))return {k,c};}
+  if(inP("MANDATE"))return {k:"MANDATE",c:m.mandate};
+  if(inP("SINAI"))return {k:"SINAI",c:m.sinai};
+  if(inP("EGYPT"))return {k:"EGYPT",c:C.egy};
+  if(inP("SAUDI"))return {k:"SAUDI",c:C.saudi};
+  if(inP("TRANSJ"))return {k:"TRANSJ",c:m.transj};
+  if(inP("EAST"))return {k:"EAST",c:m.east};
+  return {k:"OUT"};
+}
+const MANDATE_AREA=["MANDATE","A1","A2","A3","A4","JLM","PEEL_J","PEEL_B","WB","GAZA","GAZA_E"];
+const PLACE={WB:"West Bank",GAZA:"Gaza Strip",GAZA_E:"Gaza Strip, eastern part",GOLAN:"Golan Heights",SINAI:"Sinai Peninsula",SLEB:"South Lebanon",SLEB2:"South Lebanon",A1:"Proposed Arab state",A2:"Proposed Arab state",A3:"Proposed Arab state",A4:"Proposed Arab state",JLM:"Jerusalem area",PEEL_J:"Proposed Jewish state",PEEL_B:"Proposed British enclave",AREA_A:"West Bank, Area A",AREA_B:"West Bank, Area B",EAST:"Syria and Lebanon",EGYPT:"Egypt",SAUDI:"Saudi Arabia and Arabia"};
+const DEFAULT_CTL={EAST:"Syria and Lebanon",EGYPT:"Egypt",SAUDI:"Saudi Arabia",SINAI:"Egypt",TRANSJ:"Jordan"};
+function placeName(key,r){
+  if(r.k==="MANDATE")return key==="ottoman"?"Ottoman Palestine":key==="partition"?"Land proposed for a Jewish state":(key==="mandate"||key==="peel")?"Mandate Palestine":"Israel";
+  if(r.k==="TRANSJ")return SPECS[key].yr<1946?"Transjordan":"Jordan";
+  return PLACE[r.k]||r.k;
+}
+const GRP=[["j","Jews","#5b8def"],["m","Muslims","#3f9a6a"],["c","Christians","#d9a441"],["o","Others (Druze and others)","#8a8f99"]];
+const nf=n=>n.toLocaleString("en-US");
+function popBlock(id,r){
+  const ids=POP.stops[id];const box=document.createDocumentFragment();
+  const head=el("span","ml","Population by religion");box.appendChild(head);
+  if(!ids||!MANDATE_AREA.includes(r.k)){box.appendChild(el("p",null,"No verified religion breakdown for this area and period yet."));return box;}
+  ids.forEach((y,n)=>{const d=POP.snap[y];const tot=GRP.reduce((a,g)=>a+(d[g[0]]||0),0);
+    box.appendChild(el("p",null,d.y+": "+d.who));
+    const bar=el("div","pb");GRP.forEach(([k,,col])=>{if(!d[k])return;const i=el("i");i.style.width=(d[k]/tot*100)+"%";i.style.background=col;bar.appendChild(i);});box.appendChild(bar);
+    const ul=el("ul");GRP.forEach(([k,lab,col])=>{if(!d[k])return;const li=el("li");const sw=el("i");sw.style.background=col;li.appendChild(sw);
+      li.appendChild(document.createTextNode((k==="c"&&d.cLabel?d.cLabel:lab)+": "+nf(d[k])+" ("+(d[k]/tot*100).toFixed(1)+"%)"));ul.appendChild(li);});box.appendChild(ul);
+    if(n===0)box.appendChild(el("p","pn","Covers: "+(d.scope||POP.scopeAll)+" Percentages are of the groups listed."));
+    if(d.note)box.appendChild(el("p","pn",d.note));
+    const names=(d.src||[]).map(k=>S[k]&&S[k].t).filter(Boolean);if(names.length)box.appendChild(el("p","pn","Source: "+names.join("; ")));});
+  return box;
+}
+function showTip(e){
+  const rect=tmap.getBoundingClientRect(),s=STOPS[cur],key=s.map,m=SPECS[key];
+  const px=(e.clientX-rect.left)/rect.width*W,py=(e.clientY-rect.top)/rect.height*H;
+  const lon=px/30+32.2,lat=33.6-py/35;const r=regionAt(key,lon,lat,px,py);
+  if(r.k==="SEA"||r.k==="LAKE"||r.k==="OUT"){tip.hidden=true;return;}
+  const lg=m.legend.find(l=>l[0]===r.c);const ctl=lg?lg[1]:(DEFAULT_CTL[r.k]||"Not shown on this map");
+  tip.textContent="";tip.appendChild(el("b","mt",placeName(key,r)));
+  tip.appendChild(el("span","ml","Controlled by"));tip.appendChild(el("p",null,ctl));
+  tip.appendChild(popBlock(s.id,r));
+  tip.hidden=false;
+  const tw=tip.offsetWidth,th=tip.offsetHeight;let x=e.clientX+16,y=e.clientY+16;
+  if(x+tw>innerWidth-8)x=e.clientX-tw-16;if(x<8)x=8;
+  if(y+th>innerHeight-8)y=Math.max(8,innerHeight-th-8);
+  tip.style.left=x+"px";tip.style.top=y+"px";
+}
+tmap.addEventListener("pointermove",e=>{if(e.pointerType==="mouse"||e.pointerType==="pen")showTip(e);});
+tmap.addEventListener("pointerdown",e=>{if(e.pointerType==="touch")showTip(e);});
+tmap.addEventListener("pointerleave",e=>{if(e.pointerType!=="touch")tip.hidden=true;});
+document.addEventListener("pointerdown",e=>{if(!tmap.contains(e.target))tip.hidden=true;});
+addEventListener("scroll",()=>{tip.hidden=true;},{passive:true});
 /* ---------- borders ---------- */
 const selA=document.getElementById("selA"),selB=document.getElementById("selB"),bmaps=document.getElementById("bmaps");let mode="overlay";
 BSETS.forEach(([k,t])=>{selA.appendChild(new Option(t,k));});

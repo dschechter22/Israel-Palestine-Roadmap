@@ -13,6 +13,7 @@ To test, serve the folder so that unknown extensionless paths fall back to `inde
 - `leaders.js`: `window.LEADERS`, `LEADER_YEARS`, `LEADER_PERIODS`.
 - `cost.js`: casualty sources, `COST.events`, `COST.blocks` (per-conflict figures), `COST.kn` (marker sizes).
 - `check-sources.js`: `node check-sources.js` lists any source key used in the data that is missing from `S`. Exits 1 if any.
+- `pop.js`: `window.POP` religion counts shown when hovering the Timeline map (`POP.snap` counts, `POP.stops` which stop shows which). Add a count only if you read it in a source, its groups add up, and you state its scope (the counts so far cover all of Palestine, not one region). Areas with no entry show "No verified religion breakdown". Who controls an area comes from the map legend, so it never needs its own data.
 - `cost2.js`: extra harm metrics on blocks (`inj`, `disp`, `arr`, `homes`), new events, date sorting, URL fill-ins for sources without links (books link to an Open Library search), and per-block source lists. Loads last.
 
 Map polygons, palette (`C`), border specs (`SPECS`) and border sets live in `index.html`. Projection: `X=lon=>(lon-32.2)*30`, `Y=lat=>(33.6-lat)*35` on a 126x210 canvas.
