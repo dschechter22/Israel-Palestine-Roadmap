@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{var d=localStorage.getItem("ipr-device");if(d==="mobile"||d==="pc")document.documentElement.dataset.device=d}catch(e){}</script>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -243,6 +244,122 @@ details.cev summary::-webkit-details-marker{display:none}
 .about h3{font-family:var(--f-term);font-size:21px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);font-weight:400;margin:30px 0 8px}
 .about ul{padding-left:20px}
 .about li{margin-bottom:6px}
+/* device picker */
+.devpick{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}
+html:not([data-device="mobile"]):not([data-device="pc"]) .devpick{display:flex}
+html:not([data-device="mobile"]):not([data-device="pc"]) body{overflow:hidden}
+.devbox{max-width:560px;width:100%}
+.devbox h1{font-family:var(--f-head);font-weight:400;font-size:clamp(36px,8vw,56px);line-height:1;margin:0 0 12px}
+.devbox p{margin:0 0 20px}
+.devbtns{display:grid;gap:12px}
+.devbtns button{display:block;width:100%;text-align:left;cursor:pointer;background:var(--bg2);color:var(--ink);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--line);padding:14px 16px}
+.devbtns button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.devbtns b{display:block;font-family:var(--f-term);font-weight:400;font-size:28px;line-height:1.1}
+.devbtns span{display:block;font-size:14.5px;color:var(--dim)}
+.devbtns .sugtag{display:inline-block;margin-top:6px;font-family:var(--f-term);font-size:17px;color:var(--accent)}
+.toct{scroll-margin-top:16px}
+/* mobile layout (chosen on the first screen, or by the header button) */
+html[data-device="mobile"]{--mstick:96px}
+html[data-device="mobile"] body{font-size:15px;line-height:1.5;padding-block:0 76px}
+html[data-device="mobile"] .wrap{max-width:520px}
+html[data-device="mobile"] header.top{position:sticky;top:0;z-index:25;background:var(--bg);padding-block:8px 0;gap:0 12px;flex-wrap:wrap}
+html[data-device="mobile"] .logo{font-size:22px;flex:1;min-width:0}
+html[data-device="mobile"] .textbtn{font-size:17px;padding:6px 2px}
+html[data-device="mobile"] nav.tabs{order:3;width:100%;flex:none;flex-wrap:nowrap;overflow-x:auto;gap:0 18px;position:relative;scrollbar-width:none}
+html[data-device="mobile"] nav.tabs::-webkit-scrollbar{display:none}
+html[data-device="mobile"] nav.tabs a{flex:none;font-size:19px;padding:10px 2px 9px;white-space:nowrap}
+html[data-device="mobile"] .toct,html[data-device="mobile"] .plan,html[data-device="mobile"] .lperiod,html[data-device="mobile"] #story{scroll-margin-top:var(--mstick)}
+html[data-device="mobile"] .road{margin-top:8px}
+html[data-device="mobile"] .stopbtn{width:64px;padding:4px 2px}
+html[data-device="mobile"] .stopbtn .yr{font-size:15px}
+html[data-device="mobile"] .storygrid{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:12px}
+html[data-device="mobile"] .side{position:static;gap:14px}
+html[data-device="mobile"] .mapfrm{width:min(100%,280px);margin-inline:auto}
+html[data-device="mobile"] .mapnote{font-size:15px;text-align:center}
+html[data-device="mobile"] .maphint{text-align:center;font-size:12.5px}
+html[data-device="mobile"] .legend{font-size:12.5px}
+html[data-device="mobile"] .label{font-size:17px}
+html[data-device="mobile"] .fight p.lead{font-size:14px}
+html[data-device="mobile"] .matchups li{font-size:13px;gap:6px}
+html[data-device="mobile"] .rel{font-size:15px}
+html[data-device="mobile"] .crumb{font-size:17px}
+html[data-device="mobile"] .story h2{font-size:30px;margin-bottom:12px}
+html[data-device="mobile"] .story h3{font-size:18px;margin:26px 0 8px}
+html[data-device="mobile"] .facts{gap:11px}
+html[data-device="mobile"] .dispute h4{font-size:21px}
+html[data-device="mobile"] .view b{font-size:14px}
+html[data-device="mobile"] .deeper button{font-size:15px;padding:12px 2px}
+html[data-device="mobile"] .src{font-size:12.5px}
+html[data-device="mobile"] .refs{font-size:12px}
+html[data-device="mobile"] nav.foot{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));gap:10px}
+html[data-device="mobile"] .step{flex:1;max-width:150px;font-size:20px;padding:9px 10px}
+html[data-device="mobile"] nav.foot .count{font-size:17px;min-width:56px}
+html[data-device="mobile"] .intro{margin-top:14px}
+html[data-device="mobile"] .bgrid{grid-template-columns:minmax(0,1fr);gap:18px}
+html[data-device="mobile"] .bmaps{grid-template-columns:minmax(0,1fr)}
+html[data-device="mobile"] .bmaps figure{max-width:300px}
+html[data-device="mobile"] .bmaps figcaption{font-size:16px}
+html[data-device="mobile"] .controls select{font-size:16px}
+html[data-device="mobile"] .seg button{font-size:18px;padding:8px 14px}
+html[data-device="mobile"] .quick button{font-size:16px;padding:6px 9px}
+html[data-device="mobile"] .setdesc{font-size:13.5px}
+html[data-device="mobile"] .tablewrap{border-top:0;overflow:visible;margin-top:14px}
+html[data-device="mobile"] table.cmp{min-width:0;display:block;font-size:13.5px}
+html[data-device="mobile"] table.cmp thead{display:none}
+html[data-device="mobile"] table.cmp tbody{display:block}
+html[data-device="mobile"] table.cmp tr{display:block;border:1px solid var(--line);background:var(--bg2);padding:8px 10px;margin:0 0 10px}
+html[data-device="mobile"] table.cmp td{display:block;border:0;padding:3px 0;white-space:normal}
+html[data-device="mobile"] table.cmp td:first-child{font-size:15px;padding-bottom:4px}
+html[data-device="mobile"] table.cmp td:nth-child(2)::before,html[data-device="mobile"] table.cmp td:nth-child(3)::before,html[data-device="mobile"] table.cmp td:nth-child(4)::before{display:block;font-family:var(--f-term);font-size:15px;color:var(--dim);text-transform:uppercase;letter-spacing:.03em}
+html[data-device="mobile"] table.cmp td:nth-child(2)::before{content:"Land"}
+html[data-device="mobile"] table.cmp td:nth-child(3)::before{content:"Jerusalem"}
+html[data-device="mobile"] table.cmp td:nth-child(4)::before{content:"What happened"}
+html[data-device="mobile"] .plan{grid-template-columns:minmax(0,1fr);padding:24px 0}
+html[data-device="mobile"] .plan .mapfrm,html[data-device="mobile"] .plan .nomap{width:160px;margin-inline:0}
+html[data-device="mobile"] .plan h3{font-size:26px}
+html[data-device="mobile"] .plan .by{font-size:13.5px}
+html[data-device="mobile"] .terms{grid-template-columns:minmax(0,1fr);gap:2px}
+html[data-device="mobile"] .terms dt{font-size:16px}
+html[data-device="mobile"] .terms dd{margin-bottom:8px}
+html[data-device="mobile"] .jump{flex-direction:column;align-items:flex-start;gap:6px}
+html[data-device="mobile"] .jump a{font-size:18px;padding:4px 0}
+html[data-device="mobile"] .lgroup{font-size:28px;margin-top:30px}
+html[data-device="mobile"] .pyrs{font-size:17px}
+html[data-device="mobile"] .pname{font-size:21px}
+html[data-device="mobile"] .person .role{font-size:13px}
+html[data-device="mobile"] details.person summary{padding:12px 0}
+html[data-device="mobile"] .person dl{margin-left:0}
+html[data-device="mobile"] .lcountry>h3{font-size:18px}
+html[data-device="mobile"] .ckey{font-size:16px;gap:4px 14px}
+html[data-device="mobile"] .cblock h3{font-size:22px}
+html[data-device="mobile"] .crow{grid-template-columns:minmax(0,1fr)}
+html[data-device="mobile"] .clab{font-size:13.5px}
+html[data-device="mobile"] .clab b{font-size:17px}
+html[data-device="mobile"] .mfig{font-size:13px}
+html[data-device="mobile"] .cfilter button,html[data-device="mobile"] .cmetric button{font-size:16px;padding:6px 10px}
+html[data-device="mobile"] details.cev summary{grid-template-columns:34px minmax(0,1fr);padding:12px 0}
+html[data-device="mobile"] details.cev .when{grid-column:2;order:-1;font-size:16px}
+html[data-device="mobile"] .cev .ttl{font-size:19px}
+html[data-device="mobile"] .cev .kl{font-size:13px}
+html[data-device="mobile"] .cev .body{padding-left:46px}
+html[data-device="mobile"] .cev dl{grid-template-columns:minmax(0,1fr);font-size:14px}
+html[data-device="mobile"] .cev .note{font-size:14px}
+html[data-device="mobile"] .about{margin-top:14px}
+html[data-device="mobile"] .about h3{font-size:18px}
+html[data-device="mobile"] .intropage{padding-top:20px}
+html[data-device="mobile"] .intropage h1{font-size:42px}
+html[data-device="mobile"] .intropage .big{font-size:16px}
+html[data-device="mobile"] .intropage h2{font-size:18px;margin-top:28px}
+html[data-device="mobile"] .gobtn{font-size:22px;display:block;text-align:center}
+html[data-device="mobile"] .tiles{grid-template-columns:minmax(0,1fr)}
+html[data-device="mobile"] .tiles b{font-size:21px}
+html[data-device="mobile"] .tiles span{font-size:13.5px}
+html[data-device="mobile"] .toc{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+html[data-device="mobile"] body[data-view="timeline"] .toc{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+html[data-device="mobile"] .tocbtn{font-size:17px;padding:7px 11px}
+html[data-device="mobile"] .tocpanel button{font-size:14.5px;padding:10px 14px}
+html[data-device="mobile"] .maptip{font-size:13px}
+html[data-device="mobile"] .maptip .mt{font-size:22px}
 /* map hover tooltip */
 #tmap{cursor:crosshair}
 .maphint{font-size:13.5px;line-height:1.35;color:var(--dim);margin:4px 0 0}
@@ -293,6 +410,17 @@ body[data-view="timeline"] .toc{bottom:calc(80px + env(safe-area-inset-bottom,0p
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
 </style>
 
+<div class="devpick" id="device" role="dialog" aria-modal="true" aria-labelledby="devTitle">
+  <div class="devbox">
+    <h1 id="devTitle">How are you viewing this?</h1>
+    <p>Pick the layout that fits your screen. You can change it any time with the button at the top of the page.</p>
+    <div class="devbtns">
+      <button type="button" data-dev="mobile"><b>Phone</b><span>Smaller text, one column, easy tapping</span></button>
+      <button type="button" data-dev="pc"><b>Computer or tablet</b><span>Full layout with panels side by side</span></button>
+    </div>
+  </div>
+</div>
+
 <div class="wrap">
   <header class="top">
     <p class="logo"><a href="/" data-go="intro">Israel-Palestine <span>Roadmap</span></a></p>
@@ -304,6 +432,7 @@ body[data-view="timeline"] .toc{bottom:calc(80px + env(safe-area-inset-bottom,0p
       <a href="#cost" data-tab="cost">Human Cost</a>
       <a href="#about" data-tab="about">How to read this</a>
     </nav>
+    <button class="textbtn" id="deviceBtn" type="button">Phone view</button>
     <button class="textbtn" id="themeBtn" type="button">Dark mode</button>
   </header>
 
@@ -896,7 +1025,7 @@ function tocBuild(v){
     add("Overview",root.querySelector(".about p"));
     qa(".about h3").forEach(h=>add(txt(h),h));
   }
-  it.forEach(o=>{o.node.style.scrollMarginTop="16px";});
+  it.forEach(o=>o.node.classList.add("toct"));
   return it;
 }
 function tocClose(){tocPanel.hidden=true;tocBtn.setAttribute("aria-expanded","false");}
@@ -922,12 +1051,25 @@ tocBtn.onclick=()=>{const open=tocPanel.hidden;tocPanel.hidden=!open;tocBtn.setA
   if(open){const c=tocPanel.querySelector('[aria-current="location"]');if(c)c.scrollIntoView({block:"center"});}};
 document.addEventListener("click",e=>{if(!tocBox.contains(e.target))tocClose();});
 tocBox.addEventListener("keydown",e=>{e.stopPropagation();if(e.key==="Escape"){tocClose();tocBtn.focus();}});
+/* ---------- device choice ---------- */
+const devBtn=document.getElementById("deviceBtn"),devPick=document.getElementById("device");
+function centerTab(){const nv=document.querySelector("nav.tabs"),a=nv.querySelector('[aria-current="page"]');if(a&&nv.scrollWidth>nv.clientWidth)nv.scrollLeft=a.offsetLeft-(nv.clientWidth-a.offsetWidth)/2;}
+function setDevice(d,save){document.documentElement.dataset.device=d;if(save){try{localStorage.setItem("ipr-device",d);}catch(e){}}
+  devBtn.textContent=d==="mobile"?"Desktop view":"Phone view";devBtn.setAttribute("aria-label",d==="mobile"?"Switch to the desktop layout":"Switch to the phone layout");
+  tip.hidden=true;scrollTo(0,0);centerTab();tocSoon();}
+(function(){
+  const sug=matchMedia("(max-width:760px), (pointer:coarse) and (max-width:1100px)").matches?"mobile":"pc";
+  devPick.querySelectorAll("button[data-dev]").forEach(b=>{const d=b.dataset.dev;if(d===sug)b.appendChild(el("span","sugtag","Suggested for your screen"));b.onclick=()=>{setDevice(d,true);};});
+  const cd=document.documentElement.dataset.device;
+  if(cd==="mobile"||cd==="pc")setDevice(cd,false);else{devBtn.textContent=sug==="mobile"?"Desktop view":"Phone view";const f=devPick.querySelector('button[data-dev="'+sug+'"]');if(f)f.focus();}
+  devBtn.onclick=()=>setDevice(document.documentElement.dataset.device==="mobile"?"pc":"mobile",true);
+})();
 /* ---------- routing ---------- */
 const VIEWS=["intro","timeline","borders","plans","leaders","cost","about"];
 const PATHS=/^https?:$/.test(location.protocol);
 function curRoute(){const h=(location.hash||"").slice(1);if(h)return h;return PATHS?decodeURIComponent(location.pathname).replace(/^\/+|\/+$/g,""):"";}
 function setHash(h){try{history.replaceState(null,"",PATHS?"/"+h:"#"+h);}catch(e){location.hash=h;}}
-function show(v){VIEWS.forEach(x=>{document.getElementById("view-"+x).hidden=x!==v;});document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.dataset.tab===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});document.getElementById("foot").hidden=v!=="timeline";document.body.dataset.view=v;tocRefresh(v);}
+function show(v){VIEWS.forEach(x=>{document.getElementById("view-"+x).hidden=x!==v;});document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.dataset.tab===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});document.getElementById("foot").hidden=v!=="timeline";document.body.dataset.view=v;tocRefresh(v);centerTab();}
 let timelineStarted=false;
 function route(){
   const h=curRoute();

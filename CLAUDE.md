@@ -6,6 +6,7 @@ To test, serve the folder so that unknown extensionless paths fall back to `inde
 
 ## Files
 - `index.html`: all markup, CSS and app JS (pixel map, walker, tabs, rendering). Path routing over http(s): `/` is the intro page, `/timeline` (or any `/<stopid>`), `/<stopid>-pN` (Go deeper item N), `/borders`, `/plans`, `/leaders`, `/cost`, `/about`. Old `#...` links are converted to paths on load. On `file://` the same routes use `#...`. The intro page (`#view-intro`) is the landing view; the logo and the `data-go` links navigate. Also in `index.html`: a floating "Contents" button (built per tab by `tocBuild`, add new sections there) and a color key under each map in the Plans tab (from `SPECS[key].legend`).
+- Layout choice: a first-screen picker (`#device`) sets `html[data-device="mobile"|"pc"]` and remembers it in localStorage key `ipr-device`; the header button switches it. Mobile styles are the block of `html[data-device="mobile"] ...` rules in the CSS. When you add UI, add a mobile rule too, keep form controls at 16px (smaller makes iOS zoom in), and keep tap targets about 40px tall.
 - `d0.js`: `window.STOPS=[]` and the source library `S` (key -> {t: title, u: url, k: type, side: perspective, lk: link note}).
 - `d0b.js`: more sources (2026 events, apartheid reports, Gaza casualty sources), added with `Object.assign(S,{...})`.
 - `s1.js`, `s2.js`, `s3.js`: the 30 timeline stops, pushed onto `STOPS`. Fields: `id, yr, title, map, loc, fight, status [[a,kind,b]], facts[], disputes[{q,views[{who,text,pts?,src}]}], paths[{t,body[],src[]}], src[]`.
@@ -28,7 +29,7 @@ Map polygons, palette (`C`), border specs (`SPECS`) and border sets live in `ind
 ## Checks before committing
 - `node --check` each .js file.
 - Load the page (served as above) and click through every tab with the browser console open; there should be no errors. Playwright and Chromium work for this in cloud sessions.
-- Check phone width (about 390px): the page must not scroll sideways.
+- Check phone width (about 390px) in the mobile layout and the desktop layout: the page must not scroll sideways.
 - Scroll down on each tab: the Contents button should appear and its list should jump to sections.
 - `node check-sources.js` passes.
 
